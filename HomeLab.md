@@ -30,9 +30,9 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
  3 2012 google Nexus 5 devices running modified OS's ( UBPorts). 
    Any google software was removed from the devices and only run UBPORTS Ubuntu Touch Mobile OS. 
 
-1 LG Nexus 5x. Device is Running MaruOs (Currently Okinawa Build) and had been modified to run microg and Kali Linux Nethunter on top of the Rom. Device can be used for controlling the home but main use is for another project and pentesting. With MaruOs this allows for phone to be used in "convergence" to allow for a full Debian Linux desktop when connected to a supported phone dock or casted from phone to a compatible display. 
+  - 1 LG Nexus 5x. Device is Running MaruOs (Currently Okinawa Build) and had been modified to run microg and Kali Linux Nethunter on top of the Rom. Device can be used for controlling the home but main use is for another project and pentesting. With MaruOs this allows for phone to be used in "convergence" to allow for a full Debian Linux desktop when connected to a supported phone dock or casted from phone to a compatible display. 
 
-1 2012 LG Nexus 7 LTE Tablet. Tablet has been modified to run LineageOS and Microg. Once again No Google accounts are associated with the device and only limited applications are used to support the system. Also Doubles usage as local remote control.
+  - 1 2012 LG Nexus 7 LTE Tablet. Tablet has been modified to run LineageOS and Microg. Once again No Google accounts are associated with the device and only limited applications are used to support the system. Also Doubles usage as local remote control.
 
 - In home Alarm System with Self Monitoring using Alarm Decoder AD2USB appliance 
 
@@ -58,18 +58,18 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 # Setup 
 Home Server( Proxmox Site A)
-OS:
+
 - Proxmox VE
 - Size: (as of 02/20/2020) 256gb + 120gb Secondary drive 
-Features:
-- System is backed protected against power loss in multiple steps. First step is main system is on a 96000mwa backup battery designed to hold power for up to 6 hours.
-Uses:
-- Main VM for home services (Smarthome control, Music Streaming Server, DNS filtering, Alarm System) 
+
+  - System is backed protected against power loss in multiple steps. First step is main system is on a 96000mwa backup battery designed to hold power for up to 6 hours.
+
+  - Main VM for home services (Smarthome control, Music Streaming Server, DNS filtering, Alarm System) 
      
      Current VM's insalled:
      
 Smarthome (Kerberos):
-OS:
+
 - Ubuntu Vm within Proxmox Running Docker and HomeAssistant Core 
 - VM container is 50 gigs in size
 Features: 
@@ -79,69 +79,66 @@ Features:
 - System consists of Vm image in combination with multiple sensors around the house for information. Much of the information is not available outside of local network and consists of several motion, light, infrared, pressure sensors along with several cameras made from local sourced materials and open source software to manage the system. The idea is to rely on as little commercial devices as possible or at least limit as much information as possible the data that is being sent from the devices. Several devices have been modified either physically or by firmware to accomplish this. 
 - Local Wireguard Tunnel and backup Connection to system via Tor Hidden Service token allow for remote secure connection to home if web interface in unavailable because default remote connection is down. 
 - In Case Network access is comepletely down System can still send and respond to actionable notifications from Dedicated SIM 
-Uses: 
--  Smart Autmation Control of every light in the house
--  System also controls Security and Safety Systems within the house including Locks, Smoke/CO Alarm, Home Alarm systems, Thermostat
-- Monitors occupancy within the house via a combination of Motion Sensors, Occupancy Sensors and monitoring electronic devices by MAC ID   and Wifi Connection from NMAP and local bluetooth radios. 
-- Monitoring Network Traffic and home ISP connection speed 
-- Monitoring SIP home telephony connection and calls from OBIHAI device
-- Temperature monitoring
-- Vitals monitoring ( Via Google Fit API)
-- Calendar
-- Cryptocurrency Monitoring ( Crypto Prices from Bitcoin, Etherium, Litecoin, and dogecoin via CoinMarketCap)
-- Weather forecast with Full local Radar conditions and Allergy Alerts, 
-- Nasa Launch Schedule and ISS (international Space station) tracking 
-- Selfhosted Bitwarden instance
-- Self Hosted Matrix Node and IRC Chatroom 
-- RTSP camera Monitoring Via MotionEye Os integration 
-- Local PiHole Instance 
-- Emergency Notifications Via Email to SMS and dedicated Twilio account. 
-- Non essential Notifications sent by push notification on local control devices.
-- Environmental Sensors ( Air Quality)
-- Air Traffic Monitoring ( Via opensky and Checking Local Airport for delays)
-- Local Street Traffic Via Wayze local map 
-- Local Bitwarden Password Management instance 
-- Power Management and monitoring for home
-- NMAP scan for devices within home
-- Bluetooth scaning for device changes in home 
+
+  -  Smart Autmation Control of every light in the house
+  -  System also controls Security and Safety Systems within the house including Locks, Smoke/CO Alarm, Home Alarm systems, Thermostat
+  - Monitors occupancy within the house via a combination of Motion Sensors, Occupancy Sensors and monitoring electronic devices by MAC ID   and Wifi Connection from NMAP and local bluetooth radios. 
+  - Monitoring Network Traffic and home ISP connection speed 
+  - Monitoring SIP home telephony connection and calls from OBIHAI device
+  - Temperature monitoring
+  - Vitals monitoring ( Via Google Fit API)
+  - Calendar
+  - Cryptocurrency Monitoring ( Crypto Prices from Bitcoin, Etherium, Litecoin, and dogecoin via CoinMarketCap)
+  - Weather forecast with Full local Radar conditions and Allergy Alerts, 
+  - Nasa Launch Schedule and ISS (international Space station) tracking 
+  - Selfhosted Bitwarden instance
+  - Self Hosted Matrix Node and IRC Chatroom 
+  - RTSP camera Monitoring Via MotionEye Os integration 
+  - Local PiHole Instance 
+  - Emergency Notifications Via Email to SMS and dedicated Twilio account. 
+  - Non essential Notifications sent by push notification on local control devices.
+  - Environmental Sensors ( Air Quality)
+  - Air Traffic Monitoring ( Via opensky and Checking Local Airport for delays)
+  - Local Street Traffic Via Wayze local map 
+  - Local Bitwarden Password Management instance 
+  - Power Management and monitoring for home
+  - NMAP scan for devices within home
+  - Bluetooth scaning for device changes in home 
 
 
 Music Server (Siren):
-OS:
+
 - Debian 10 Vm within Proxmox Running AzuraCast
 - VM container is 16 gigs in size
-Uses: 
-- Dedicated Streaming Server for internet radio and performance streaming.
-- Planned possible update would be to migrate this to a larger VM on a better server and add DJ software to. Would use a thin Client to connect Turntables to in order to stream without needing a dedicated laptop at home can allocate additional storage for music library to keep everything together and act as a trinary backup (Secondary is Cloud Backup at present.) 
+
+  - Dedicated Streaming Server for internet radio and performance streaming.
+  - Planned possible update would be to migrate this to a larger VM on a better server and add DJ software to. Would use a thin Client to connect Turntables to in order to stream without needing a dedicated laptop at home can allocate additional storage for music library to keep everything together and act as a trinary backup (Secondary is Cloud Backup at present.) 
 
 Pihole/PiVPN Server (Hemidall):
-OS:
+
 - Rasbian Jessie Vm within Proxmox
 - VM is 16 gigs in Size
-Features:
- - Specified Blocklist and VPN (mullvad)
- Uses:
- - Ad blocker and VM client using Pihole and Mullvad VPN service. 
- - Instance is meant to be able to send connection over to mobile devices via WireGuard Setup. 
- - Wireguard connection is set to connect to Blokada Instance in mobile devices for On the Go adblock/VPN 
+   - Specified Blocklist and VPN (mullvad)
+   - Ad blocker and VM client using Pihole and Mullvad VPN service. 
+   - Instance is meant to be able to send connection over to mobile devices via WireGuard Setup. 
+   - Wireguard connection is set to connect to Blokada Instance in mobile devices for On the Go adblock/VPN 
  
- Signal Server
- OS:
+ Signal Server (Hermes)
+
  - Debian 10 VM within Proxmox
  - VM is 20 gigs in Size
-Uses: Stand alone Signal Messaging Server for the house using the dedicated number from Twilio. Main use is for home notifications from the smarthome system .
+  - Stand alone Signal Messaging Server for the house using the dedicated number from Twilio. Main use is for home notifications from the smarthome system .
  
- PFsense router:
- Os:
+ PFsense router (Charon):
+
  - PFsense
  - VM 2gb in Size
- Uses: 
   - Current minipc Quotom-Q575g6-s05 comes with up to 6 gigabit speed ethernet ports along with ability to add wifi via PCI card and cellular data capability. Idea is to use the extra ports as a dedicated Encrypted router and run ethernet ports to additional Server Rack within home once completed. This would allow for a local "private network" for certain devices while leaving the remaining devices in the home available on the "clear" network. 
  
 Homeserver ( Site B):
 OS:
 - Proxmox VE
-- Current Size: ( as of 2/20/2020)   2tb JBOD Config in Raid 1 ( Mainly because drives are old and not currently used heavily)
+  - Current Size: ( as of 2/20/2020)   2tb JBOD Config in Raid 1 ( Mainly because drives are old and not currently used heavily)
 - Features: 
   - Currently a JBOD of 2.5" Drives, 6 total equalling roughly 2tb with a possibility to add at least 2 more tb. 
   - Site B at present is mainly a testing environment Will be upgraded to full cloud storage once acquired remaining needed hardware to support it. 
@@ -149,25 +146,25 @@ OS:
    Current VM's Installed:
    
  Android X86:
- Os:
+ 
   - Android 8.0
   - 32Gb in size
  Uses:
-  - Android Os Rom testing and App testing with ADB Sideload
+   - Android Os Rom testing and App testing with ADB Sideload
   
  Windows: 
- OS:
+
   - Windows 7 R2
   - 100gb in size
  Uses:
-  - Testing Exploits and in the rare case Windows was needed for anything. 
+   - Testing Exploits and in the rare case Windows was needed for anything. 
 
  # Servers 
  - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard but not currently active) "Site A" 
  
  - ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site B" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
  
- -Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site C" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
+ - Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site C" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
  
  - HP Proliant Mlgg3 Server (4gb of ram, Intel Xeon Processor 3.06GHz) (possible use as a dedicated mailserver due to age) 
  
