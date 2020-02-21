@@ -21,6 +21,8 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site B" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
 
+- Gigabyte F2A88XM-DH3 (Amd A-10 7890k Processor, 8gb Ram (expanding to 32gb later, Kingston 120gb SSD, WD Blue 1tb HDD,) Current use as a SteamOS remote pc and Emulation machine. 
+
 - 10" lcd Touch panel hardwired to local alarm system for control
 
 - 10 cameras. 5 cameras are modified from original firmware (WyzeCam mk2 and Wyzecam Pan)  to use RTSP and local SD storage for monitoring. 3 are made from upcycled devices from local laptops and single board computer cameras. Cameras piggy back off of IR light from visible cameras for nightvision. Remaining two cameras are Nest cameras. Cameras also use MotionEye Os as a means of using cameras as a motion detection device
@@ -44,7 +46,7 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - HP Proliant Ml330 Generation 3 Server (4gigs) 
 
-- 2 Wyse Terminals 
+- 2 Wyse Terminals (Model Cx0 C30LE.Ce 128f/512r.DVI US)
 
 - 10 raspberry pi 0w's ( 5 with GPIO pins, 5 Without )
 
@@ -55,6 +57,10 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 - 3 Routers Flashed with DDWRT 
 
 - 2 Hp Compaq ddx2200 Microtower pc (2gb Ram, Pentium4 processor) 
+
+- 3 Netgear GS608 8 port gigabit switch
+
+- TP-Link TL-SG116E UnManaged Switch
 
 # Setup 
 Home Server( Proxmox Site A)
@@ -74,7 +80,7 @@ Smarthome (Kerberos):
 - VM container is 50 gigs in size
 Features: 
 - Redundant backup automated to upload to two separate cloud accounts at varying times during the day, Cloud account holds 30 days worth of twice daily backups. The System itself holds 2 days of backups each for a total of 4 local daily snapshots saved to the system and 60 saved within cloud account.
-- System is backed protected against power loss in multiple steps. First step is main system is on a 96000mwa backup battery designed to hold power for up to 6 hours (See Proxmox VE entry.) Second step is a dedicated raspberry pi 3b+ ( Soon to be upgraded to a pi4 4 gig model)  attached to a battery backup rated to keep the device and an interface running for up to 10 hours along with a usb modem to ensure in case of a power loss that critical notifications from the alarm system still reach intended persons. This is done VIA SMS and the device is hardwired to home power to charge automatically. Dedicated camera and reed switch sensor monitor for any tampering with where devices are stored. 
+- System is backed protected against power loss in multiple steps. First step is main system is on a 19500mwa backup battery designed to hold power for up to 6 hours (See Proxmox VE entry.) Second step is a dedicated raspberry pi 3b+ ( Soon to be upgraded to a pi4 4 gig model)  attached to a battery backup rated to keep the device and an interface running for up to 10 hours along with a usb modem to ensure in case of a power loss that critical notifications from the alarm system still reach intended persons. This is done VIA SMS and the device is hardwired to home power to charge automatically. Dedicated camera and reed switch sensor monitor for any tampering with where devices are stored. 
 - Third Backup being developed for Offsite physical storage
 - System consists of Vm image in combination with multiple sensors around the house for information. Much of the information is not available outside of local network and consists of several motion, light, infrared, pressure sensors along with several cameras made from local sourced materials and open source software to manage the system. The idea is to rely on as little commercial devices as possible or at least limit as much information as possible the data that is being sent from the devices. Several devices have been modified either physically or by firmware to accomplish this. 
 - Local Wireguard Tunnel and backup Connection to system via Tor Hidden Service token allow for remote secure connection to home if web interface in unavailable because default remote connection is down. 
@@ -159,7 +165,7 @@ OS:
  Uses:
    - Testing Exploits and in the rare case Windows was needed for anything. 
 
- # Servers 
+ # Servers (plans for expansion)
  - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard but not currently active) "Site A" 
  
  - ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site B" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
@@ -167,6 +173,8 @@ OS:
  - Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site C" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
  
  - HP Proliant Mlgg3 Server (4gb of ram, Intel Xeon Processor 3.06GHz) (possible use as a dedicated mailserver due to age) 
+ 
+ - Gigabyte F2A88XM-DH3 (Amd A-10 7890k Processor, 8gb Ram (expanding to 32gb later, Kingston 120gb SSD, WD Blue 1tb HDD,) Current use as a SteamOS remote pc and Emulation machine. Will Be used for Dedicated Home Theater Pc. 
  
  # Todo List
  
