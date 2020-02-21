@@ -19,7 +19,7 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site C" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
 
--Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site B" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
+- Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site B" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
 
 - 10" lcd Touch panel hardwired to local alarm system for control
 
@@ -82,7 +82,7 @@ Features:
 Uses: 
 -  Smart Autmation Control of every light in the house
 -  System also controls Security and Safety Systems within the house including Locks, Smoke/CO Alarm, Home Alarm systems, Thermostat
-- Monitors occupancy within the house via a combination of Motion Sensors, Occupancy Sensors and monitoring electronic devices by MAC ID and Wifi Connection from NMAP and local bluetooth radios. 
+- Monitors occupancy within the house via a combination of Motion Sensors, Occupancy Sensors and monitoring electronic devices by MAC ID   and Wifi Connection from NMAP and local bluetooth radios. 
 - Monitoring Network Traffic and home ISP connection speed 
 - Monitoring SIP home telephony connection and calls from OBIHAI device
 - Temperature monitoring
