@@ -27,7 +27,7 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - Control devices: 5 Google Nexus devices.
 
- 3 2012 google Nexus 5 devices running modified OS's ( UBPorts). 
+ - 3 2012 google Nexus 5 devices running modified OS's ( UBPorts). 
    Any google software was removed from the devices and only run UBPORTS Ubuntu Touch Mobile OS. 
 
   - 1 LG Nexus 5x. Device is Running MaruOs (Currently Okinawa Build) and had been modified to run microg and Kali Linux Nethunter on top of the Rom. Device can be used for controlling the home but main use is for another project and pentesting. With MaruOs this allows for phone to be used in "convergence" to allow for a full Debian Linux desktop when connected to a supported phone dock or casted from phone to a compatible display. 
