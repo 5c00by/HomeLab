@@ -68,7 +68,7 @@ Home Server( Proxmox Site A)
 - Proxmox VE
 - Size: (as of 02/20/2020) 256gb + 120gb Secondary drive 
 
-  - System is backed protected against power loss in multiple steps. First step is main system is on a 96000mwa backup battery designed to hold power for up to 6 hours.
+  - System is backed protected against power loss in multiple steps. First step is main system is on a 19500Mwa backup battery designed to hold power for up to 6 hours.
 
   - Main VM for home services (Smarthome control, Music Streaming Server, DNS filtering, Alarm System) 
      
@@ -80,12 +80,12 @@ Smarthome (Kerberos):
 - VM container is 50 gigs in size
 Features: 
 - Redundant backup automated to upload to two separate cloud accounts at varying times during the day, Cloud account holds 30 days worth of twice daily backups. The System itself holds 2 days of backups each for a total of 4 local daily snapshots saved to the system and 60 saved within cloud account.
-- System is backed protected against power loss in multiple steps. First step is main system is on a 19500mwa backup battery designed to hold power for up to 6 hours (See Proxmox VE entry.) Second step is a dedicated raspberry pi 3b+ ( Soon to be upgraded to a pi4 4 gig model)  attached to a battery backup rated to keep the device and an interface running for up to 10 hours along with a usb modem to ensure in case of a power loss that critical notifications from the alarm system still reach intended persons. This is done VIA SMS and the device is hardwired to home power to charge automatically. Dedicated camera and reed switch sensor monitor for any tampering with where devices are stored. 
+- System is backed protected against power loss in multiple steps. First step is main system is on a 19500Mwa backup battery designed to hold power for up to 6 hours (See Proxmox VE entry.) Second step is a dedicated raspberry pi 3b+ ( Soon to be upgraded to a pi4 4 gig model)  attached to a battery backup rated to keep the device and an interface running for up to 10 hours along with a usb modem to ensure in case of a power loss that critical notifications from the alarm system still reach intended persons. This is done VIA SMS and the device is hardwired to home power to charge automatically. Dedicated camera and reed switch sensor monitor for any tampering with where devices are stored. 
 - Third Backup being developed for Offsite physical storage
 - System consists of Vm image in combination with multiple sensors around the house for information. Much of the information is not available outside of local network and consists of several motion, light, infrared, pressure sensors along with several cameras made from local sourced materials and open source software to manage the system. The idea is to rely on as little commercial devices as possible or at least limit as much information as possible the data that is being sent from the devices. Several devices have been modified either physically or by firmware to accomplish this. 
 - Local Wireguard Tunnel and backup Connection to system via Tor Hidden Service token allow for remote secure connection to home if web interface in unavailable because default remote connection is down. 
 - In Case Network access is comepletely down System can still send and respond to actionable notifications from Dedicated SIM 
-
+ -Uses:
   -  Smart Autmation Control of every light in the house
   -  System also controls Security and Safety Systems within the house including Locks, Smoke/CO Alarm, Home Alarm systems, Thermostat
   - Monitors occupancy within the house via a combination of Motion Sensors, Occupancy Sensors and monitoring electronic devices by MAC ID   and Wifi Connection from NMAP and local bluetooth radios. 
