@@ -17,13 +17,13 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard but not currently active) "Site A"
 
-- ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site C" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
+- ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site C" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients) 
 
 - Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site B" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
 
 - 10" lcd Touch panel hardwired to local alarm system for control
 
-- 10 cameras. 5 cameras are modified from original firmware (WyzeCam mk2 and Wyzecam Pan)  to use RTSP and local Sim storage for monitoring. 3 are made from upcycled devices from local laptops and single board computer cameras. Cameras piggy back off of IR light from visible cameras for nightvision. Remaining two cameras are Nest cameras. Cameras also use MotionEye Os as a means of using cameras as a motion detection device
+- 10 cameras. 5 cameras are modified from original firmware (WyzeCam mk2 and Wyzecam Pan)  to use RTSP and local SD storage for monitoring. 3 are made from upcycled devices from local laptops and single board computer cameras. Cameras piggy back off of IR light from visible cameras for nightvision. Remaining two cameras are Nest cameras. Cameras also use MotionEye Os as a means of using cameras as a motion detection device
 
 - Control devices: 5 Google Nexus devices.
 
