@@ -2,11 +2,11 @@
 Description of my HomeLab/ Smart Home setup. 
 
 # Contents
-. Overview
-. Gear
-. Setup
-. Servers
-. To do list
+- Overview
+- Gear
+- Setup
+- Servers
+- To do list
 
 # Overview
 My Homelab consists of multiple repurposed copmuters (for now) and some upcycled parts salvaged from electronics around the home ( Mostly monitors and reflashed older cellphones. Each device and VM associated with the server uses will all be codenamed according to the following scheme for ease of distinction
