@@ -17,9 +17,9 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard but not currently active) "Site A"
 
-- ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site B" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
+- ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site C" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
 
--Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site C" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
+-Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site B" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
 
 - 10" lcd Touch panel hardwired to local alarm system for control
 
@@ -30,7 +30,7 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
  3 2012 google Nexus 5 devices running modified OS's ( UBPorts). 
    Any google software was removed from the devices and only run UBPORTS Ubuntu Touch Mobile OS. 
 
-1 LG Nexus 5x. Device is Running MaruOs (Currently Okinawa Build) and had been modified to run microg and Kali Linux Nethunter on top of the Rom. Device can be used for controlling the home but main use is for another project and pentesting. 
+1 LG Nexus 5x. Device is Running MaruOs (Currently Okinawa Build) and had been modified to run microg and Kali Linux Nethunter on top of the Rom. Device can be used for controlling the home but main use is for another project and pentesting. With MaruOs this allows for phone to be used in "convergence" to allow for a full Debian Linux desktop when connected to a supported phone dock or casted from phone to a compatible display. 
 
 1 2012 LG Nexus 7 LTE Tablet. Tablet has been modified to run LineageOS and Microg. Once again No Google accounts are associated with the device and only limited applications are used to support the system. Also Doubles usage as local remote control.
 
@@ -42,14 +42,32 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - Aeotec Z-stick Gen5 For Zwave device control 
 
+- HP Proliant Ml330 Generation 3 Server (4gigs) 
+
+- 2 Wyse Terminals 
+
+- 10 raspberry pi 0w's ( 5 with GPIO pins, 5 Without )
+
+- 2 Raspberry Pi 3b 
+
+- 2 Raspberry pi 3b+
+
+- 3 Routers Flashed with DDWRT 
+
+- 2 Hp Compaq ddx2200 Microtower pc (2gb Ram, Pentium4 processor) 
+
 # Setup 
 Home Server( Proxmox Site A)
 OS:
-Proxmox VE
+- Proxmox VE
+- Size: (as of 02/20/2020) 256gb + 120gb Secondary drive 
 Features:
 - System is backed protected against power loss in multiple steps. First step is main system is on a 96000mwa backup battery designed to hold power for up to 6 hours.
 Uses:
 - Main VM for home services (Smarthome control, Music Streaming Server, DNS filtering, Alarm System) 
+     
+     Current VM's insalled:
+     
 Smarthome (Kerberos):
 OS:
 - Ubuntu Vm within Proxmox Running Docker and HomeAssistant Core 
@@ -74,7 +92,7 @@ Uses:
 - Weather forecast with Full local Radar conditions and Allergy Alerts, 
 - Nasa Launch Schedule and ISS (international Space station) tracking 
 - Selfhosted Bitwarden instance
-- Self Hosted Matrix Node and IRC Chatroom via "The Lounge" integration
+- Self Hosted Matrix Node and IRC Chatroom 
 - RTSP camera Monitoring Via MotionEye Os integration 
 - Local PiHole Instance 
 - Emergency Notifications Via Email to SMS and dedicated Twilio account. 
@@ -83,14 +101,15 @@ Uses:
 - Air Traffic Monitoring ( Via opensky and Checking Local Airport for delays)
 - Local Street Traffic Via Wayze local map 
 - Local Bitwarden Password Management instance 
-- Power Management and monitoring 
+- Power Management and monitoring for home
+- NMAP scan for devices within home
+- Bluetooth scaning for device changes in home 
+
 
 Music Server (Siren):
 OS:
 - Debian 10 Vm within Proxmox Running AzuraCast
 - VM container is 16 gigs in size
-Features: 
-
 Uses: 
 - Dedicated Streaming Server for internet radio and performance streaming.
 - Planned possible update would be to migrate this to a larger VM on a better server and add DJ software to. Would use a thin Client to connect Turntables to in order to stream without needing a dedicated laptop at home can allocate additional storage for music library to keep everything together and act as a trinary backup (Secondary is Cloud Backup at present.) 
@@ -112,6 +131,37 @@ Features:
  - VM is 20 gigs in Size
 Uses: Stand alone Signal Messaging Server for the house using the dedicated number from Twilio. Main use is for home notifications from the smarthome system .
  
+ PFsense router:
+ Os:
+ - PFsense
+ - VM 2gb in Size
+ Uses: 
+  - Current minipc Quotom-Q575g6-s05 comes with up to 6 gigabit speed ethernet ports along with ability to add wifi via PCI card and cellular data capability. Idea is to use the extra ports as a dedicated Encrypted router and run ethernet ports to additional Server Rack within home once completed. This would allow for a local "private network" for certain devices while leaving the remaining devices in the home available on the "clear" network. 
+ 
+Homeserver ( Site B):
+OS:
+- Proxmox VE
+- Current Size: ( as of 2/20/2020)   2tb JBOD Config in Raid 1 ( Mainly because drives are old and not currently used heavily)
+- Features: 
+  - Currently a JBOD of 2.5" Drives, 6 total equalling roughly 2tb with a possibility to add at least 2 more tb. 
+  - Site B at present is mainly a testing environment Will be upgraded to full cloud storage once acquired remaining needed hardware to support it. 
+  
+   Current VM's Installed:
+   
+ Android X86:
+ Os:
+  - Android 8.0
+  - 32Gb in size
+ Uses:
+  - Android Os Rom testing and App testing with ADB Sideload
+  
+ Windows: 
+ OS:
+  - Windows 7 R2
+  - 100gb in size
+ Uses:
+  - Testing Exploits and in the rare case Windows was needed for anything. 
+
  # Servers 
  - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard but not currently active) "Site A" 
  
@@ -119,8 +169,13 @@ Uses: Stand alone Signal Messaging Server for the house using the dedicated numb
  
  -Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site C" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
  
- 
+ - HP Proliant Mlgg3 Server (4gb of ram, Intel Xeon Processor 3.06GHz) (possible use as a dedicated mailserver due to age) 
  
  # Todo List
+ 
+ - Build Dedicated Email Server
+ - Build Dedicated Gaming Server ( SteamOS with support for RetroArch and custom Games to add on as well)
+ - Custom built Smart Displays using recycled parts from decomissioned computers ( Can salvage ram, cameras, displays, microphones, and batteries) 
+ - Add VM for CraftBeerPi (http://web.craftbeerpi.com/installation/), possibly BrewPi (https://www.brewpi.com/), and MashBerry (http://sebastian-duell.de/en/mashberry/index.html)
  
  
