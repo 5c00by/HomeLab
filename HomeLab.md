@@ -56,7 +56,7 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - 3 Routers Flashed with DDWRT 
 
-- 2 Hp Compaq ddx2200 Microtower pc (2gb Ram, Pentium4 processor) 
+- 2 Hp Compaq ddx2200 Microtower pc (2gb Ram, Pentium4 processor, 1 kingston 120gb SSD, 1 WD Blue 320gb HDD) 
 
 - 3 Netgear GS608 8 port gigabit switch
 
