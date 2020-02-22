@@ -21,3 +21,69 @@ The Nexus 5x will be using a Custom Android rom called MaruOs (https://maruos.co
 
 # Setup and Install 
   
+Phone Prep: 
+
+ - In order to set this up we'll need to make sure we have a few thing prepped and ready to go. As this would involve loading a Custom ROM and Recovery to the phone there is always the risk that the phone could be accidentally bricked. I realize much of this would be a leap of faith so I started with the basics of any Android Os development. There are many guides on this but the process is about the same. For the sake of simplicity I had downloaded the ADB ( android development bridge) tools previously and unlocked the phone with the now abandoned Android Root Toolkit ( https://www.wugfresh.com/nrt/, still works but no updates so it only covers Nexus devices). As I am currently using only Linux boxes if I were to do this again the process would be different. If you got this far this assumes you have some experience in the process. If not I would suggest following this guide to get the necessary tools on your operating system to start and follow them closely (https://wiki.lineageos.org/adb_fastboot_guide.html). After that we will need to make sure the phone is setup as well If you haven't followed the link all the way down 9 and you should have) this will take you to the steps to enable the Dev options Typically it involves the following:
+   - In the Phone's setting go to the the About Phone section 
+   - look for the devices build number
+   - tap that buildnumber 10 times to unlock the developer settings ( this is the case with many Android phones)
+   - go back to the settings menu
+   - scroll down until you see the developer options
+   - toggle the "OEM" unlocking option
+   - scroll down and toggle the USB Debugging option as well. ( If the the phone is plugged in you will get a prompt to trust the device. Select yes)
+
+With that setup you can go through the steps provided here: https://maruos.com/docs/devices/bullhead.html#install-maru-via-twrp to insall the custom recovery that will be needed. I'll outlay the steps here from the page.
+
+  - Install Maru via TWRP
+# Download
+Download the latest update zip for your device (it will look like maru-v0.x.y-update-bullhead-<sha256>.zip)
+
+(Optional) If you would like to restore access to the Play store, you can download a third-party Google Apps zip and install it alongside Maru during this installation process. ( I avoided this to save space and make sure Google doesn't have access to the device you really shouldn't need it unless you plan on casting to a Chromecast or something like that) 
+
+Push the update zip to your device by opening up a terminal (Linux or Mac) or Command Prompt (Windows) and running the following:
+
+$ adb push -p maru-v0.x.y-update-bullhead-xxxxxxxx.zip /sdcard/
+TIP
+
+You can also just download the update zip directly from your device's browser so you don't need to push it from your PC to your device.
+
+# Backup
+Reboot to TWRP custom recovery:
+$ adb reboot recovery
+You will now be in TWRP recovery.
+
+Take a complete back-up before proceeding so it's easy to revert back if needed. Just tap Backup > Swipe to Backup.
+# Install
+When you are ready to install Maru, do the following:
+
+Tap "Install"
+
+Tap the Maru update zip you pushed earlier (you may need to scroll down)
+
+Swipe right to confirm flash of Maru
+
+Hit back till you are at the main screen, then Wipe
+
+Swipe right to Factory Reset (this will still keep your back-ups on your sdcard)
+
+Tap Reboot System
+
+Note
+
+You may be asked to install SuperSU to root your device. If you know what rooting your device means and want to have it rooted then go ahead. Otherwise, it's best to tap "Do Not Install".
+
+Regardless of your installation method, the first boot will take a few minutes so please be patient.
+
+However we will be making sure to not reboot the device just yet as detailed in the last step (and if you did that's fine just restart the device and reboot into recovery again by holding down the volume key when starting up the phone to access the bootloader/ recovery menu after enabling the developer options one more time..) 
+
+Instead we're going to go ahead and install Nethunter. 
+
+  - In order to do this on the computer go to https://www.offensive-security.com/kali-linux-nethunter-download/
+  - Download the "NetNunter Nexus 5X Oreo" build of this ( As MaruOs is currently based on Android 8 this ensures less bugs) 
+  - Next follow the instructions here: https://gitlab.com/kalilinux/nethunter/build-scripts/kali-nethunter-project/-/wikis/home. One side note about this. I have flashed this several times and the install screen tends to "hang" with the progress bar during the install sometimes. I have had to attempt to flash this a few times but a good indicator of if it's still installing is if the progress bar is still animated or when you touch it the phone still vibrates a bit. That said it can take a long while to install. just be patient. 
+  - Second issue I ran into constantly is that for whatever reason the Kali Linux CHMOD tends to not like to download when you're in the Kali Linux application. There is a way around that which is basically taking the CHMOD file from the download and saving it to the "/" file directory in the phone ( Basically when you connect your phone to your pc and open it just move the file the that location with all the other folders and not just the downloads or TWRP folder, CHMOD won't find it otherwise. The instructions on how to do this is here: 
+  - Next we're going to install the Nethunter Application from here: https://gitlab.com/kalilinux/nethunter/apps/kali-nethunter-app/-/releases. You can either do this in the recovery or just copying the .apk file to the downloads and installing it from the phone itself. Either option is fine. 
+  - While Normally this would be the stopping point I decided to add a few more things to the Kali Linux Store application. Aas this works like Fdroid you can still add additional repo in the settings.A list of known repos can be found here: https://forum.f-droid.org/t/known-repositories/721. I added repos for Bromite ( to replace Google Chrome. App is part of the GrapheneOs suite a completely privacy focused, hardened version of android and can be found here https://grapheneos.org/), Bitwarden as a password manager and password generator, The Guardian Project's repo ( Another privacy focused repo but some of hte applications are outdate but this does give us access to TOR via Orbot and the Tor browser application. Here's their site if oyu wish to read more https://guardianproject.info/), Ember's Repo for the non Google dependent version of Signal, a privacy focused messaging application. I also Installed MicroG as well to replace Google play services with their implementation although much of this can usually function without it. 
+  - Going back into MaruOs itself there is another option we can add if we wish. Since it is based on LineageOs there is a few useful options within the developer settings we can use. First and most import is root access. As this phone is being made for pentesting and once again assuming this is why you would follow this then you should understand the risks that are being undertaken. Mind you much of this is to remain as unidenifiable in a test environment as possible but it's not perfect. One, I'm a novice so I may have my steps wrong here but one thing we need to be clear on is that root access is "Giving The keys to the Kingdom" for any applications needing it. That said any rouge application that has this access can brick your phone or if you left anything to identify you with find you easily. So enable this option at your own risk and only if you know what you are doing. Anothe thing to add that may be redundant is that there is an option to enable a terminal within Android itself further down. This is basically giving a commandline interface to the Android shell and can come in handy as well. There are terminal Applications within the Kali suite of apps but its always a good thing to make note of this as well. Also once again make sure you have OEM unlocking and USB debugging access open again if they aren't already. This at least gives you  more of a chance to get back to recovery if you need to also once again with this being a Nexus 5x and dreaded SD808 solder issue you can still apply a patch to make the phone somewhat useable, abeit slower, by running the app to shut down the larger core and that requires access to recovery ( I'll list the link to this later.)  
+  
+With all this installed and running right we're set for the basis of the development environment.
