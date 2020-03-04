@@ -136,19 +136,19 @@ Pihole/PiVPN Server (Kerberos):
 
  - Debian 10 VM within Proxmox
  - VM is 20 gigs in Size
-  - Stand alone Signal Messaging Server for the house using the dedicated number from Twilio. Main use is for home notifications from the smarthome system .
+   - Stand alone Signal Messaging Server for the house using the dedicated number from Twilio. Main use is for home notifications from the smarthome system .
  
  PFsense router:
 
  - PFsense
  - VM 2gb in Size
-  - Current minipc Quotom-Q575g6-s05 comes with up to 6 gigabit speed ethernet ports along with ability to add wifi via PCI card and cellular data capability. Idea is to use the extra ports as a dedicated Encrypted router and run ethernet ports to additional Server Rack within home once completed. This would allow for a local "private network" for certain devices while leaving the remaining devices in the home available on the "clear" network. 
+   - Current minipc Quotom-Q575g6-s05 comes with up to 6 gigabit speed ethernet ports along with ability to add wifi via PCI card and cellular data capability. Idea is to use the extra ports as a dedicated Encrypted router and run ethernet ports to additional Server Rack within home once completed. This would allow for a local "private network" for certain devices while leaving the remaining devices in the home available on the "clear" network. 
   
   Magic Mirror Server:
   
   - Ubuntu Server VM
   - VM 32 gb in size
-   - Server is for Instances of Magic Mirror builds (https://magicmirror.builders/) to use with information display panels built throughout the house. The Raspberry pi Zero W's will act as a client to stream the mirrors and also running room assistant and Motion Eye clients for presence detection. The pi's will be flashed with Dietpi (https://dietpi.com/dietpi-software.html) to conserve space and easier usage to deploy docker to install roomassistant, Chromium in kiosk mode for the display and also motioneye through the addon service and save space on SD card for install compared to Raspbian. 
+    - Server is for Instances of Magic Mirror builds (https://magicmirror.builders/) to use with information display panels built throughout the house. The Raspberry pi Zero W's will act as a client to stream the mirrors and also running room assistant and Motion Eye clients for presence detection. The pi's will be flashed with Dietpi (https://dietpi.com/dietpi-software.html) to conserve space and easier usage to deploy docker to install roomassistant, Chromium in kiosk mode for the display and also motioneye through the addon service and save space on SD card for install compared to Raspbian. 
  
 Homeserver ( Site B):
 OS:
