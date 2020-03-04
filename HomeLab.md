@@ -62,6 +62,8 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - TP-Link TL-SG116E UnManaged Switch
 
+- Huawei e3372 USB Modem (Twilio Sim Attached to it.)
+
 # Setup 
 Home Server( Proxmox Site A)
 
@@ -74,7 +76,7 @@ Home Server( Proxmox Site A)
      
      Current VM's insalled:
      
-Smarthome (Kerberos):
+Smarthome (Hemidallr):
 
 - Ubuntu Vm within Proxmox Running Docker and HomeAssistant Core 
 - VM container is 50 gigs in size
@@ -121,7 +123,7 @@ Music Server (Siren):
   - Dedicated Streaming Server for internet radio and performance streaming.
   - Planned possible update would be to migrate this to a larger VM on a better server and add DJ software to. Would use a thin Client to connect Turntables to in order to stream without needing a dedicated laptop at home can allocate additional storage for music library to keep everything together and act as a trinary backup (Secondary is Cloud Backup at present.) 
 
-Pihole/PiVPN Server (Hemidall):
+Pihole/PiVPN Server (Kerberos):
 
 - Rasbian Jessie Vm within Proxmox
 - VM is 16 gigs in Size
@@ -136,11 +138,17 @@ Pihole/PiVPN Server (Hemidall):
  - VM is 20 gigs in Size
   - Stand alone Signal Messaging Server for the house using the dedicated number from Twilio. Main use is for home notifications from the smarthome system .
  
- PFsense router (Charon):
+ PFsense router:
 
  - PFsense
  - VM 2gb in Size
   - Current minipc Quotom-Q575g6-s05 comes with up to 6 gigabit speed ethernet ports along with ability to add wifi via PCI card and cellular data capability. Idea is to use the extra ports as a dedicated Encrypted router and run ethernet ports to additional Server Rack within home once completed. This would allow for a local "private network" for certain devices while leaving the remaining devices in the home available on the "clear" network. 
+  
+  Magic Mirror Server:
+  
+  - Ubuntu Server VM
+  - VM 32 gb in size
+   - Server is for Instances of Magic Mirror builds (https://magicmirror.builders/) to use with information display panels built throughout the house. The Raspberry pi Zero W's will act as a client to stream the mirrors and also running room assistant and Motion Eye clients for presence detection. The pi's will be flashed with Dietpi (https://dietpi.com/dietpi-software.html) to conserve space and easier usage to deploy docker to install roomassistant, Chromium in kiosk mode for the display and also motioneye through the addon service and save space on SD card for install compared to Raspbian. 
  
 Homeserver ( Site B):
 OS:
@@ -185,4 +193,5 @@ OS:
  - Add VM for CraftBeerPi (http://web.craftbeerpi.com/installation/), possibly BrewPi (https://www.brewpi.com/), and MashBerry (http://sebastian-duell.de/en/mashberry/index.html)
  - Build Information displays using the raspbery pi0w's. Software used will be Dietpi and running Chromium in Kiosk mode to point at a MagicMirror Server instance. Displays will be sourced from salvaged laptop parts (will add screen model no# later) and homemade frames. Will use 12v-5v stepdown converter with two outputs to power both the pi and display. Will need to source Control boards from ebay and add USB dongle for addons ( Motion sensor, Camera, Ect to regulate if display is awake or not. Possible Mic for satellite Ai Assistant support once opensource program is located to replace using SNIPS.AI) 
  - Config remaining 2 Rasberry Pi 3b devices for HTPC Streaming Client. Considering using Devices as a Steamlink Client to Remote SteamOS instance ( May need to make or clone VM for multiple instances but may need to research restrictions on logins for this for local play cases). Devices should be able to stream from VM fine as long as hardwired to network ( Home network includes multiple Cat-6 runs) Will need to test for input lag between wireless controls and IR input (Wireless is preferable to using cabled controllers)
+ - Update pi-Zero W's to run Motioneye (https://github.com/ccrisan/motioneye/wiki)  and Room Assistant (https://github.com/mKeRix/room-assistant) 
  
