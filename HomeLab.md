@@ -101,7 +101,7 @@ Uses:
   - Weather forecast with Full local Radar conditions and Allergy Alerts, 
   - Nasa Launch Schedule and ISS (international Space station) tracking 
   - Selfhosted Bitwarden instance
-  - Self Hosted Matrix Node and IRC Chatroom 
+  - Self Hosted Matrix Server and IRC Chatroom 
   - RTSP camera Monitoring Via MotionEye Os integration 
   - Local PiHole Instance 
   - Emergency Notifications Via Email to SMS and dedicated Twilio account. 
@@ -113,6 +113,7 @@ Uses:
   - Power Management and monitoring for home
   - NMAP scan for devices within home
   - Bluetooth scaning for device changes in home 
+  - SMS Notifications using Twilio sent through Signal Messenger
 
 
 Music Server (Siren):
@@ -194,4 +195,5 @@ OS:
  - Build Information displays using the raspbery pi0w's. Software used will be Dietpi and running Chromium in Kiosk mode to point at a MagicMirror Server instance. Displays will be sourced from salvaged laptop parts (will add screen model no# later) and homemade frames. Will use 12v-5v stepdown converter with two outputs to power both the pi and display. Will need to source Control boards from ebay and add USB dongle for addons ( Motion sensor, Camera, Ect to regulate if display is awake or not. Possible Mic for satellite Ai Assistant support once opensource program is located to replace using SNIPS.AI) 
  - Config remaining 2 Rasberry Pi 3b devices for HTPC Streaming Client. Considering using Devices as a Steamlink Client to Remote SteamOS instance ( May need to make or clone VM for multiple instances but may need to research restrictions on logins for this for local play cases). Devices should be able to stream from VM fine as long as hardwired to network ( Home network includes multiple Cat-6 runs) Will need to test for input lag between wireless controls and IR input (Wireless is preferable to using cabled controllers)
  - Update pi-Zero W's to run Motioneye (https://github.com/ccrisan/motioneye/wiki)  and Room Assistant (https://github.com/mKeRix/room-assistant) 
+ - Attempt to see if possible to add either a Riot client (https://about.riot.im/features)  or Linphone client (https://www.linphone.org/) to pi to make Smart mirror capable of intercom like features and mesaging. May need to switch from a mirror to using an upcycled replacement touchscreen monitor build for this (possible option MT230DW03 V.0 replacement monitor https://www.ebay.com/itm/Dell-Inspiron-One-2320-23-Desktop-LCD-Touch-Screen-Glossy-MT230DW03-V-0/184154777593?_trkparms=aid%3D111001%26algo%3DREC.SEED%26ao%3D1%26asc%3D225074%26meid%3D55994aa369034417947f07bf3da358ac%26pid%3D100675%26rk%3D1%26rkt%3D15%26mehot%3Dnone%26sd%3D184154777593%26itm%3D184154777593%26pmt%3D0%26noa%3D1%26pg%3D2380057&_trksid=p2380057.c100675.m4236&_trkparms=pageci%3Aa8b6d093-5f10-11ea-8454-74dbd180f09e%7Cparentrq%3Aabfee74f1700aa66c9b3943cffea8ca0%7Ciid%3A1)
  
