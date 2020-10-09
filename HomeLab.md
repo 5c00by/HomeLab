@@ -17,13 +17,13 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 
 - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard ) - Main use Firewall via PFSense
 
-- ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire)  
+- ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive/ AMD RX560 4gb Graphics Card)  
 
 - Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 120 gb SSD. Will be used as Open MediaVault/Nextcloud instance for backups when more storage is added. Planned expansion to 24 tb SnapRAID/UnionFS build with at least 2-3 parity drives if Raid Controller addon allows
 
 - Gigabyte F2A88XM-DH3 (Amd A-10 7890k Processor, 18gb Ram ,AMD R7250 4gbVram Gpu, Rx560 2Gb VRAM GPU 24 TB JBOD Current use as a Proxmox Test Lab
 
-- Dell PowerEdge R710 3.5" (48 gig RAM, 46 4tb, WD IRonwolf Nas Drives, Modified riser install for AMD r7250 GPU) _ Primary use Main Proxmox Server 
+- Dell PowerEdge R710 3.5" (48 gig RAM, 46 4tb, WD IRonwolf Nas Drives, Modified riser install for Nvidia GT630 4gb GPU) _ Primary use Main Proxmox Server 
 
 - Dell Compellent SC220 24Bay 2.5", No drives yet, Will use to migrate VM's at later date for better usage with SAS storage medium and RAID Z1
 
@@ -44,18 +44,6 @@ In Addition I'm also including my Smarthome Setup in the listing since some of t
 - Raspberry Pi 4 4gb - Docker/Smart Home system
 
 # Setup 
-Home Server( Proxmox)
-
-- Proxmox VE
-- Size:  256gb + 120gb Secondary drive 
-
-  - System is backed protected against power loss in multiple steps. First step is main system is on a 19500Mwa backup battery designed to hold power for up to 6 hours.
-
-  - PFSENSE Firewall/ Server Rack Connection 
-     
-     Current VM's insalled: None
-
-- Raspberry Pi 4 4gb    
 
 
 Smarthome:
@@ -103,7 +91,9 @@ PFsense router:
  - PFsense
  - 240 gb in Size
    - Current minipc Quotom-Q575g6-s05 comes with up to 6 gigabit speed ethernet ports along with ability to add wifi via PCI card and cellular data capability. Idea is to use the extra ports as a dedicated Encrypted router and run ethernet ports to additional Server Rack within home once completed. This would allow for a local "private network" for certain devices while leaving the remaining devices in the home available on the "clear" network. 
-  
+  - System is backed protected against power loss in multiple steps. First step is main system is on a 19500Mwa backup battery designed to hold power for up to 6 hours.
+
+  - PFSENSE Firewall/ Server Rack Connection 
   
  
 Homeserver:
@@ -165,7 +155,13 @@ Pihole/PiVPN Server:
  
   - Ubuntu 20.04 VM
   - 200 gb in Size
-  - Current Running Heimdall, Signal Server, Magic Mirror
+  - Current Running:
+     . Heimdall
+     . Signal Server
+     . Magic Mirror
+     . Nodered
+     
+     
   
  Windows 10 Vm
    - 200 gb Vm
@@ -175,17 +171,7 @@ Pihole/PiVPN Server:
    - Ubuntu Server 20.04
    - Currently Passing 3 tb Drive through to VM, Will move over to different storage later
 
- # Servers (plans for expansion)
- - Quotom-Q575g6-s05 Mini Pc (Intel 7th generation i7 processor 16 gig of Ram/Kingston SUV500MS/ 240Gb SSD/ Kingston 120 SSD/ DualBand Wireless AC7260 pci Wifi/Bluetooth Adapter with Two Dual Band 7dbi 2.4Ghz/5ghz antennas/ Additional Twilio Backup Sim is also installed onboard but not currently active) "Site A" 
- 
- - ASUS M5A97 R2.0 AM3+ AMD 970 SATA 6Gb/s USB 3.0 ATX AMD Motherboard (AmdFx 8350 processor 16gb Ram(expanding to 32 later)/ Samsung 512gb SSD, WD Black 2TB hard drive, 2.5" WD Blue 1Tb Drive( Planned migration to 6 WD IronWolf Green 4tb drives)/ AMD RX560 4gb Graphics Card/ AMD RX560 2gb Graphics Card 9 non-crossfire) "Site B" ( will be used as another Proxmox Node with Both Graphics Cards being in use for up to 2 seperate VM's for thin clients and HTPC usage With Plex) 
- 
- - Asus AMD Zacate E350-m1-Pro- (Amd A5 processor, 10gb Ram, 6 WD 3tb Green Drives, AMD R7 4gb Graphics Card) "Site C" Will be used as a proxmox node but will mainly be used for Cloud Storage with NextCloud 
- 
- - HP Proliant Mlgg3 Server (4gb of ram, Intel Xeon Processor 3.06GHz) (possible use as a dedicated mailserver due to age) 
- 
- - Gigabyte F2A88XM-DH3 (Amd A-10 7890k Processor, 8gb Ram (expanding to 32gb later, Kingston 120gb SSD, WD Blue 1tb HDD,) Current use as a SteamOS remote pc and Emulation machine. Will Be used for Dedicated Home Theater Pc. 
- 
+
  
  # Todo List
  
