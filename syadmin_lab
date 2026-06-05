@@ -1,0 +1,154 @@
+This is where a home data center transforms from a lab into a literal enterprise operations simulator. In the corporate world, Sysadmins live and breathe **Identity Management (Active Directory)** and **Unified Endpoint Management (MDM)**.
+
+Using your actual spare inventory—the old MacBook, the Dell laptops, and a pile of old phones—gives you a concrete, tangible hardware fleet to enforce real-world policies on.
+
+Below is a production-level deployment blueprint for your repository. It walks you through setting up a Microsoft Active Directory domain controller on your Proxmox server, configuring an open-source cross-platform device manager (**FleetDM**), and registering your actual physical devices into the system.
+
+---
+
+# 🛠️ Blueprint: Core Corporate Sysadmin Lab (Active Directory + MDM)
+
+This framework establishes an on-premises enterprise directory environment paired with an over-the-air device tracking and configuration server.
+
+```
+                                  [ R710 Proxmox Host ]
+                                            |
+                      ---------------------------------------------
+                      |                                           |
+        [ Active Directory DC ]                             [ FleetDM Node ]
+           Windows Server VM                                 Docker Compose
+            (Domain/DNS Controller)                        (Unified MDM Server)
+            IP: 192.168.10.10                                IP: 192.168.10.20
+                      |                                           |
+     ===================[ Physical Lab Switch Layer ]==================
+           |                        |                       |
+    [ Target Endpoint ]     [ Target Endpoint ]     [ Mobile Client ]
+       Dell Laptop              Old MacBook            Spare Phones
+     (Windows Domain)          (macOS Profile)        (Android Fleet)
+
+```
+
+## 🗂️ Tier 1: Directory Services (Windows Server Active Directory)
+
+Active Directory (AD) is the identity backbone of corporate networks. It authenticates users, structures company hierarchies, and enforces computer constraints via Group Policy Objects (GPOs).
+
+### Step A: Provisioning the Domain Controller VM
+
+* **Base OS:** Windows Server 2022 (Evaluation ISO downloaded directly from Microsoft is free for 180 days).
+* **Allocation (Proxmox):** 2 vCPUs, 4 GB RAM, 40 GB Storage.
+* **Network Parameter:** Assign a static IP directly on your local lab subnet (e.g., `192.168.10.10`).
+
+### Step B: Promoting to Domain Controller
+
+1. Open **Server Manager** inside the Windows Server instance -> click **Add roles and features**.
+2. Select **Active Directory Domain Services (AD DS)**. Allow the wizard to automatically add the dependency feature sets (including DNS Server), and proceed through the installation defaults.
+3. Once completed, click the yellow warning flag icon at the top of Server Manager and select **Promote this server to a domain controller**.
+4. Select **Add a new forest**. Set your root domain name to something distinct for your lab environment (e.g., `corp.scooby.lan`).
+5. Choose a safe Directory Services Restore Mode (DSRM) password, leave the DNS delegation defaults intact, and execute the installation. The server will reboot automatically.
+
+### Step C: Simulating Enterprise Administration
+
+Open **Active Directory Users and Computers** (`dsa.msc`) from the start menu to build out a simulated corporate organization chart.
+
+1. Right-click your domain -> **New** -> **Organizational Unit (OU)**. Name it `Corporate_Staff`.
+2. Create sub-OUs inside it named `IT_Department` and `Finance`.
+3. Right-click the `IT_Department` OU -> **New** -> **User**. Create an enterprise account for yourself (e.g., username `p.randolph`).
+
+### Step D: Enforcing Constraints via Group Policy (GPO)
+
+Open **Group Policy Management** (`gpmc.msc`).
+
+1. Expand your domain, right-click your `Corporate_Staff` OU, and choose **Create a GPO in this domain, and Link it here**. Name it `Enforce_Corporate_Wallpaper`.
+2. Right-click the new GPO -> click **Edit**.
+3. Navigate to **User Configuration** -> **Policies** -> **Administrative Templates** -> **Desktop** -> **Desktop**.
+4. Double-click **Desktop Wallpaper**, enable it, and point the path to a shared network image (e.g., your SCP Foundation logo). Any client computer added to this domain will now automatically lock their user's desktop screen to this graphic.
+
+---
+
+## 📱 Tier 2: Unified Endpoint Management (FleetDM MDM)
+
+To manage modern endpoints (especially your old MacBook and laptops), Sysadmins use Mobile Device Management (MDM) servers to push configurations over the air. We will use **FleetDM** (built on top of the open-source *osquery* framework and *nanoMDM* engines), which handles macOS, Windows, Linux, and mobile visibility inside a unified open console.
+
+### Step A: FleetDM Architecture Deployment
+
+Drop this definition directly into a file named `docker-compose-mdm.yml` on your server host to initialize your MDM asset tracking backbone.
+
+```yaml
+version: '3.8'
+
+services:
+  mdm-db:
+    image: mysql:8.0
+    container_name: fleet_database
+    environment:
+      - MYSQL_ROOT_PASSWORD=fleet_db_secret_pass
+      - MYSQL_DATABASE=fleet
+      - MYSQL_USER=fleet_user
+      - MYSQL_PASSWORD=fleet_user_pass
+    volumes:
+      - fleet_mysql_data:/var/lib/mysql
+    restart: unless-stopped
+
+  fleetdm:
+    image: fleetdm/fleet:v4.49.0
+    container_name: fleet_manager
+    ports:
+      - "8080:8080"
+    environment:
+      - FLEET_MYSQL_ADDRESS=mdm-db:3306
+      - FLEET_MYSQL_DATABASE=fleet
+      - FLEET_MYSQL_USER=fleet_user
+      - FLEET_MYSQL_PASSWORD=fleet_user_pass
+      - FLEET_AUTH_JWT_KEY=generate_a_random_secure_jwt_string_here
+    depends_on:
+      - mdm-db
+    restart: unless-stopped
+
+volumes:
+  fleet_mysql_data:
+
+```
+
+Launch the server node:
+
+```bash
+docker compose -f docker-compose-mdm.yml up -d
+
+```
+
+Access the management control plane by pointing your browser to `http://<YOUR_SERVER_IP>:8080`.
+
+---
+
+## 🔌 Tier 3: Physical Asset Enrollment (The "Hardware Fleet")
+
+With your infrastructure backend active, you can begin registering your actual physical devices.
+
+### 1. Enrolling Your Dell Laptops (Windows AD Enrollment)
+
+To practice managing Windows endpoints, connect your physical spare Dell laptop directly to your Active Directory domain.
+
+1. Boot up the Dell laptop. Open its **Network Properties**, modify the IPv4 configuration, and explicitly set the **Primary DNS Server IP** to point straight to your Domain Controller VM (`192.168.10.10`). *If you skip this step, the laptop will fail to resolve your corporate domain.*
+2. Right-click **This PC** -> select **Properties** -> click **Advanced System Settings** -> **Computer Name** -> click **Change**.
+3. Toggle the selection radio button from *Workgroup* over to **Domain**. Type your root domain identity: `corp.scooby.lan`.
+4. Hit enter. A security prompt will appear. Input the domain administrator credentials. Once verified, the machine will display a "Welcome to the domain" notification and prompt for a reboot. You can now log into that physical laptop using the corporate `p.randolph` user profile created in Tier 1.
+
+### 2. Enrolling Your Old MacBook (macOS MDM Fleet)
+
+1. Log into your FleetDM browser interface, select **Hosts** -> click **Add Hosts**, and toggle the selection to **macOS**.
+2. Download the generated lightweight configuration profile or package installer file.
+3. Transfer the installer to the old MacBook. Run the enrollment package.
+4. Open the MacBook's **System Settings** -> navigate to **Profiles** (or Device Management) and accept the FleetDM configuration token.
+5. The MacBook will now begin securely reporting live OS versions, disk encryption states, hardware variables, and installed packages directly back to your FleetDM asset dashboard.
+
+### 3. Enrolling Spare Android Phones (Mobile Matrix)
+
+For your collection of spare mobile phones, you can use FleetDM's native tracking enrollment profiles to pull deep hardware data over your local Wi-Fi loop.
+
+1. Navigate to your FleetDM dashboard configuration portal and grab your custom agent enrollment URL or QR Code token.
+2. Grab your old Android phones, ensure they are connected to your local home network Wi-Fi layer, and scan the generated configuration target.
+3. Approve the device enrollment profiles to link the handheld units straight back to your centralized datacenter hardware sheets.
+
+---
+
+This complete Sysadmin deployment document can be added right alongside your previous lab records as a new `SYSADMIN_LAB.md` component block. You've got everything you need to start mastering corporate operations at your own pace!
