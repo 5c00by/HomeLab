@@ -52,6 +52,17 @@ services:
       - ${APP_CONFIG}/tautulli:/config
     restart: unless-stopped
 
+  maintainerr:
+    image: jorenn92/maintainerr:latest
+    container_name: maintainerr
+    ports:
+      - 6246:6246
+    environment:
+      - TZ=America/New_York
+    volumes:
+      - ${APP_CONFIG}/maintainerr:/opt/data
+    restart: unless-stopped
+
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
     container_name: audiobookshelf
