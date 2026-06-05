@@ -1,0 +1,122 @@
+version: '3.8'
+
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    container_name: adguardhome
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 3000:3000/tcp
+      - 85:80/tcp
+    volumes:
+      - ${APP_CONFIG}/adguard/work:/opt/adguardhome/work
+      - ${APP_CONFIG}/adguard/conf:/opt/adguardhome/conf
+    restart: unless-stopped
+
+  scrypted:
+    image: koush/scrypted:latest
+    container_name: scrypted
+    network_mode: host
+    volumes:
+      - ${APP_CONFIG}/scrypted:/server/volume
+    restart: unless-stopped
+
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    container_name: frigate
+    privileged: true # Gives access to local hardware acceleration vectors
+    shm_size: "64mb" # Native scratch space required for video streams
+    ports:
+      - 5000:5000
+      - 8554:8554 # RTSP Feeds
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${APP_CONFIG}/frigate/config:/config
+      - ${MEDIA_POOL}/security_footage:/media/frigate
+    restart: unless-stopped
+
+  glances:
+    image: nicolargo/glances:latest
+    container_name: glances
+    pid: host # Required to parse CPU/RAM parameters directly from Cerberus
+    ports:
+      - 61208:61208
+    environment:
+      - GLANCES_OPT=-w
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    ports:
+      - 1883:1883
+      - 9001:9001
+    volumes:
+      - ${APP_CONFIG}/mosquitto/config:/mosquitto/config
+      - ${APP_CONFIG}/mosquitto/data:/mosquitto/data
+      - ${APP_CONFIG}/mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+
+  zwave-js-ui:
+    image: zwavejs/zwave-js-ui:latest
+    container_name: zwave-js-ui
+    tty: true
+    stop_signal: SIGINT
+    environment:
+      - SESSION_SECRET=change_me_secret
+    devices:
+      - '/dev/serial/by-id/insert_your_zwave_stick_here:/dev/zwave'
+    ports:
+      - 8091:8091
+      - 3002:3000
+    volumes:
+      - ${APP_CONFIG}/zwave-js:/usr/src/app/store
+    restart: unless-stopped
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    ports:
+      - 1880:1880
+    volumes:
+      - ${APP_CONFIG}/node-red:/data
+    restart: unless-stopped
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptime-kuma
+    ports:
+      - 3005:3001
+    volumes:
+      - ${APP_CONFIG}/uptime-kuma:/app/data
+    restart: unless-stopped
+
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    ports:
+      - 8085:80
+    volumes:
+      - ${APP_CONFIG}/vaultwarden:/data
+    restart: unless-stopped
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - SERVERURL=your.domain.or.ip
+      - SERVERPORT=51820
+      - PEERS=myPhone,myLaptop
+    ports:
+      - 51820:51820/udp
+    volumes:
+      - ${APP_CONFIG}/wireguard:/config
+    restart: unless-stopped
