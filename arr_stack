@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 9696:9696
+    volumes:
+      - ${APP_CONFIG}/prowlarr:/config
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 8989:8989
+    volumes:
+      - ${APP_CONFIG}/sonarr:/config
+      - ${MEDIA_POOL}/tv:/tv
+      - ${MEDIA_POOL}/downloads:/downloads
+    restart: unless-stopped
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 7878:7878
+    volumes:
+      - ${APP_CONFIG}/radarr:/config
+      - ${MEDIA_POOL}/movies:/movies
+      - ${MEDIA_POOL}/downloads:/downloads
+    restart: unless-stopped
+
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 8686:8686
+    volumes:
+      - ${APP_CONFIG}/lidarr:/config
+      - ${MEDIA_POOL}/music:/music
+      - ${MEDIA_POOL}/downloads:/downloads
+    restart: unless-stopped
+
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 8787:8787
+    volumes:
+      - ${APP_CONFIG}/readarr:/config
+      - ${MEDIA_POOL}/books:/books
+      - ${MEDIA_POOL}/downloads:/downloads
+    restart: unless-stopped
+
+  mylar3:
+    image: lscr.io/linuxserver/mylar3:latest
+    container_name: mylar3
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 8090:8090
+    volumes:
+      - ${APP_CONFIG}/mylar3:/config
+      - ${MEDIA_POOL}/comics:/comics
+      - ${MEDIA_POOL}/downloads:/downloads
+    restart: unless-stopped
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 6767:6767
+    volumes:
+      - ${APP_CONFIG}/bazarr:/config
+      - ${MEDIA_POOL}/movies:/movies
+      - ${MEDIA_POOL}/tv:/tv
+    restart: unless-stopped
+
+  whisparr:
+    image: lscr.io/linuxserver/whisparr:develop
+    container_name: whisparr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 6969:6969
+    volumes:
+      - ${APP_CONFIG}/whisparr:/config
+    restart: unless-stopped
