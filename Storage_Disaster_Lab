@@ -1,0 +1,122 @@
+Loading up the Supermicro with Proxmox Backup Server (PBS) is a brilliant architectural decision. PBS isn't just a standard backup target; it uses enterprise-grade deduplication and incremental chunk-based backups. By running PBS on that 12-drive Supermicro chassis, you can back up your entire virtualization fleet from the Dell R710 with near-zero overhead, saving a massive amount of storage space.
+
+Using your stack of old 2.5" laptop drives to populate the 24-bay Dell Compellent SC220 is a classic, high-efficiency system administration move. While they aren't enterprise-grade SAS drives, they are perfect for a low-stakes test environment. It lets you test configuration limits, map storage protocols, and practice disaster recovery without spending a single dollar.
+
+Below is the complete blueprint to add to your repository as `STORAGE_DISASTER_LAB.md`. It outlines how to wire your laptop drives into the Compellent shelf, pass them to Proxmox, and orchestrate automated backups via the Supermicro PBS node.
+
+---
+
+# 💾 Blueprint: Enterprise Storage Protocol & Disaster Recovery Lab
+
+This guide maps out the deployment of an enterprise-grade storage network using a dedicated high-density disk shelf populated with salvaged 2.5" laptop drives, linked to a primary compute node and an independent Proxmox Backup Server (PBS) deduplication target.
+
+```
+ [ Primary Compute Host ] ------------ (NFS / iSCSI Network Link) ------------ [ High-Density Storage Shelf ]
+     (Dell R710 Proxmox)                                                          (Compellent SC220 Array)
+             |                                                                      (2.5" Salvaged Disks)
+             | (Automated Deduplicated Backup Stream)
+             v
+ [ Backup Infrastructure Target ]
+   (Supermicro 2U Node Running PBS)
+   (12x 4TB IronWolf CMR Drives)
+
+```
+
+## 🔌 1. Tier 1: Hardware Interconnect & Disk Shelf Provisioning
+
+Connecting an enterprise disk shelf to a host machine requires proper SAS controller topology.
+
+### Step A: The HBA Controller Interface
+
+1. To pass the individual salvaged laptop drives directly from the Dell Compellent SC220 to your operating system without hardware RAID interference, the host controller must be flashed to **IT Mode (Initiator Target)**.
+2. Use an external Host Bus Adapter (HBA) card (such as an LSI 9207-8e or equivalent) installed in your compute machine.
+3. Connect the HBA to the Compellent SC220 EM01 controllers using an SFF-8088 SAS cable.
+
+### Step B: The Salvaged 2.5" Laptop Drive Array
+
+1. Mount your salvaged laptop drives into the Compellent caddies and slide them into the 24-bay faceplate.
+2. Because these are standard consumer 2.5" SATA drives being plugged into an enterprise SAS backplane, ensure your interposers or caddies pass the single-channel SATA signals through cleanly to the controller.
+3. Boot up the chassis. The backplane will automatically negotiate downstream link speeds (typically 3Gbps or 6Gbps depending on the legacy drive controller age).
+
+---
+
+## 🗄️ 2. Tier 2: Mapping Advanced Storage Protocols (iSCSI vs. NFS)
+
+Once your host detects the individual laptop drives (e.g., displaying as `/dev/sdb`, `/dev/sdc`, etc.), you can practice configuring enterprise network storage protocols.
+
+### Option A: The Block-Level Track (iSCSI Targets)
+
+iSCSI allows a remote compute node to treat a network-attached storage array as a raw, local physical hard disk over standard Ethernet.
+
+1. Group your collection of 2.5" laptop drives into a storage pool on your storage manager machine.
+2. Install the target utility software package:
+```bash
+sudo apt install targetcli-fb
+
+```
+
+
+
+```
+3. Open the utility console by running `targetcli`. Navigate to `/backstores/block` and map a logical volume created from your laptop drives.
+4. Create an iSCSI Qualified Name (IQN) path identifier under `/iscsi`, set up an Access Control List (ACL) matching your target Dell R710 host initiator network ID, and map the drive payload.
+5. **The Proxmox Hook:** Open your primary Proxmox interface, navigate to **Datacenter** -> **Storage** -> **Add iSCSI**. Input the storage host portal IP address and the exact target IQN string. Proxmox will map the raw laptop drive pool over your local network as local LVM space.
+
+### Option B: The File-Level Track (Network File System - NFS)
+NFS is highly optimized for sharing directories containing file objects (like raw ISO installers or virtual disk templates) across Linux nodes.
+1. Create a dedicated mounting folder on your storage control base: `mkdir /mnt/compellent_pool`.
+2. Configure your export mappings in your system configuration file (`/etc/exports`):
+   ```ini
+   /mnt/compellent_pool  192.168.10.0/24(rw,sync,no_subtree_check,no_root_squash)
+
+```
+
+3. Refresh your system kernel export daemon layers: `sudo exportfs -ra`.
+4. **The Proxmox Hook:** Navigate to Proxmox -> **Datacenter** -> **Storage** -> **Add NFS**. Set the target address and specify your custom directory path folder link.
+
+---
+
+## 🛡️ 3. Tier 3: The Dedicated Backup Target (Proxmox Backup Server)
+
+Your Supermicro 2U chassis functions as your ultimate recovery vault, running Proxmox Backup Server (PBS) directly on bare metal across your 12x 4TB IronWolf CMR array.
+
+### Step A: Datastore Initialization
+
+1. Complete the standard bare-metal installation of Proxmox Backup Server on the Supermicro node.
+2. Log into the PBS Web console interface at `https://<SUPERMICRO_IP>:8007`.
+3. Navigate to **Administration** -> **Storage/Disks**. Format and group your 12x 4TB IronWolf drives into a large, secure storage space (ZFS Mirror or RAIDZ2 pool).
+4. Click **Datastore** -> **Create Datastore** and point the path tracking directly to your mounted IronWolf storage mount point.
+
+### Step B: Syncing Compute to the Vault
+
+1. Inside the PBS Web console, click **Dashboard** and copy the **Fingerprint** security string token.
+2. Open your production virtual computing environment host (Dell R710). Go to **Datacenter** -> **Storage** -> **Add Proxmox Backup Server**.
+3. Input your Supermicro PBS node IP address, user account configurations (`admin@pbs`), your custom password, and paste the precise security fingerprint string. Click **Add**.
+
+---
+
+## 🌪️ 4. The Incident Simulator (Disaster Recovery Exercises)
+
+With this multi-tiered storage architecture running, you can practice handling real-world production data center hardware failures.
+
+### Drill 1: The Consumer Drive Failure Emulation
+
+* **The Scenario:** Consumer laptop drives lack the rotational vibration protection found in enterprise NAS drives. Over time, heavy container operations can trigger an I/O timeout failure.
+* **The Execution:** While a non-critical test VM running on the Compellent network share is actively writing data, physically pull one of your laptop drives straight out of the SC220 disk tray slot.
+* **The Troubleshooting Action:** Watch how your storage pool handles the sudden degradation. Practice inspecting the kernel ring buffer logs (`dmesg -T` or `journalctl -xe`) to identify drive dropped-link warnings. Practice inserting a replacement drive and running repair commands to rebuild the array.
+
+### Drill 2: Full Datacenter Machine Recovery
+
+* **The Scenario:** A motherboard on your main virtualization computer fails. Your compute node goes completely black, but your data is safely stored in your separate backup vault.
+* **The Execution:** Intentionally turn off your primary Dell R710 compute server to simulate a catastrophic hardware failure.
+* **The Troubleshooting Action:**
+1. Boot up a temporary Proxmox host instance (such as your unassigned spare ASUS B450 or MSI Z270 motherboard test bench).
+2. Link the temporary test bench to your Supermicro PBS machine by entering the PBS IP address and security fingerprint token.
+3. Open the PBS datastore mapping window inside the new node, select your latest production VM backup snapshots, and hit **Restore**.
+4. Watch your virtual machines spin back up on completely different hardware within minutes.
+
+
+
+---
+
+This complete blueprint can be pushed straight to your master GitHub branch to document your storage testing lab. It's an incredible framework that lets you practice enterprise-grade infrastructure management completely on recycled hardware!
