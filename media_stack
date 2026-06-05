@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=docker
+    volumes:
+      - ${APP_CONFIG}/plex:/config
+      - ${MEDIA_POOL}/movies:/movies
+      - ${MEDIA_POOL}/tv:/tv
+    restart: unless-stopped
+
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    user: 1000:1000
+    network_mode: host
+    volumes:
+      - ${APP_CONFIG}/jellyfin:/config
+      - ${APP_CONFIG}/jellyfin-cache:/cache
+      - ${MEDIA_POOL}/movies:/media/movies
+      - ${MEDIA_POOL}/tv:/media/tv
+    restart: unless-stopped
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=info
+      - TZ=America/New_York
+    ports:
+      - 5055:5055
+    volumes:
+      - ${APP_CONFIG}/jellyseerr:/app/config
+    restart: unless-stopped
+
+  tautulli:
+    image: ghcr.io/tautulli/tautulli:latest
+    container_name: tautulli
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 8181:8181
+    volumes:
+      - ${APP_CONFIG}/tautulli:/config
+    restart: unless-stopped
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    ports:
+      - 13378:80
+    volumes:
+      - ${MEDIA_POOL}/audiobooks:/audiobooks
+      - ${MEDIA_POOL}/podcasts:/podcasts
+      - ${APP_CONFIG}/audiobookshelf/config:/config
+      - ${APP_CONFIG}/audiobookshelf/metadata:/metadata
+    restart: unless-stopped
+
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    user: 1000:1000
+    ports:
+      - 4533:4533
+    environment:
+      - ND_SCANSCHEDULE=@every 1h
+      - ND_LOGLEVEL=info
+    volumes:
+      - ${APP_CONFIG}/navidrome:/data
+      - ${MEDIA_POOL}/music:/music
+    restart: unless-stopped
+
+  navidrums:
+    image: cesargomez89/navidrums:latest
+    container_name: navidrums
+    ports:
+      - 3000:3000
+    environment:
+      - NAVIDROME_URL=http://localhost:4533
+    restart: unless-stopped
+
+  komga:
+    image: gotson/komga:latest
+    container_name: komga
+    ports:
+      - 25600:8080
+    volumes:
+      - ${APP_CONFIG}/komga:/config
+      - ${MEDIA_POOL}/manga:/data
+    restart: unless-stopped
