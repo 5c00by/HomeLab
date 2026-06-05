@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+    ports:
+      - 9091:9091
+      - 51413:51413
+    volumes:
+      - ${APP_CONFIG}/transmission:/config
+      - ${MEDIA_POOL}/downloads:/downloads
+    restart: unless-stopped
+
+  of-scraper:
+    image: datawhores/of-scraper:latest
+    container_name: of-scraper
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ${APP_CONFIG}/of-scraper:/config
+      - ${MEDIA_POOL}/archives/of_contents:/output
+    restart: unless-stopped
+
+  automatic-ripping-machine:
+    image: automaticrippingmachine/automatic-ripping-machine:latest
+    container_name: arm
+    devices:
+      - /dev/sr0:/dev/sr0  # Passes your rack-mounted drive through directly
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ${APP_CONFIG}/arm:/config
+      - ${MEDIA_POOL}/downloads/raw_rips:/home/arm/media
+    restart: unless-stopped
+
+  deemix:
+    image: lscr.io/linuxserver/deemix:latest
+    container_name: deemix
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 6595:6595
+    volumes:
+      - ${APP_CONFIG}/deemix:/config
+      - ${MEDIA_POOL}/music:/downloads
+    restart: unless-stopped
+
+  seekdownloader:
+    image: musicmovearr/seekdownloader:latest
+    container_name: seekdownloader
+    ports:
+      - 8072:8072
+    volumes:
+      - ${APP_CONFIG}/seekdownloader:/config
+    restart: unless-stopped
