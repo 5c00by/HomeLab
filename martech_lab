@@ -1,0 +1,305 @@
+# 🏗️ Blueprint: Mock MarTech Data Warehouse & API Troubleshooting Lab
+
+This project guide details how to build a fully functional, containerized Marketing Technology (MarTech) pipeline on your virtualized infrastructure. The lab is explicitly engineered to train you in **API log troubleshooting** (using OpenSearch/Kibana), **REST API manipulation** (via Postman/Bruno), and **Raw SQL Data Warehousing** from scratch, with zero prior programming or database experience required.
+
+---
+
+## 🌐 1. System Architecture & Component Mapping
+
+Instead of paying for expensive corporate endpoints, you will host the entire lifecycle of consumer data natively across your server stack.
+
+```
+ [ Postman / Bruno ] --------> [ FastAPI Log Generator ]
+   (API Manual Tests)               (Ingestion Endpoint)
+                                             |
+                                             v
+  [ OpenSearch Dashboards ] <--------- [ Fluent Bit ]
+    (Kibana Log Analysis)           (Telemetry Shipper)
+                                             |
+                                             v
+ [ Raw SQL Query Practice ] <--------- [ PostgreSQL ]
+   (DBeaver Browser UI)              (Data Warehouse)
+
+```
+
+### Resource Allocation (Dell R710 Proxmox Host)
+
+* **Base OS Instance:** Ubuntu 24.04 LTS (or Debian 12) running a standard Docker Engine stack.
+* **Compute Profiling:** 2 vCPUs, 6 GB RAM, 40 GB SSD Storage allocation.
+
+---
+
+## 🐋 2. The Infrastructure Deployment (`docker-compose.yml`)
+
+Create a dedicated folder in your environment called `martech-sandbox` and drop the following configuration file directly inside it. This single deployment config installs your analytical database, log engine, telemetry router, and mock API without requiring manual server builds.
+
+```yaml
+version: '3.8'
+
+services:
+  # Tier 1: The Core Relational Data Warehouse
+  warehouse-db:
+    image: postgres:16-alpine
+    container_name: martech_warehouse
+    environment:
+      - POSTGRES_USER=analytics_admin
+      - POSTGRES_PASSWORD=martech_secret_pass
+      - POSTGRES_DB=marketing_vault
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Tier 2: The Log Analytics Engine (Elasticsearch Alternative)
+  opensearch:
+    image: opensearchproject/opensearch:2.14.0
+    container_name: log_engine
+    environment:
+      - cluster.name=martech-log-cluster
+      - node.name=log-node-01
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - DISABLE_SECURITY_PLUGIN=true # Simplifies local lab environment setup
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    restart: unless-stopped
+
+  # Tier 3: The Log Visualization Interface (Kibana Alternative)
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.14.0
+    container_name: log_visualizer
+    ports:
+      - "5601:5601"
+    environment:
+      - OPENSEARCH_HOSTS=http://opensearch:9200
+      - DISABLE_SECURITY_PLUGIN=true
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+
+  # Tier 4: The Intelligent Log Routing Agent
+  fluent-bit:
+    image: fluent/fluent-bit:3.0-enterprise
+    container_name: log_shipper
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+    depends_on:
+      - opensearch
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+
+```
+
+### Required Configuration Add-on
+
+Before booting the stack, create a text file named `fluent-bit.conf` in the exact same directory. This file instructs your logging agent to capture container outputs and stream them straight into your OpenSearch cluster for analysis:
+
+```ini
+[SERVICE]
+    Flush        1
+    Log_Level    info
+
+[INPUT]
+    Name         tail
+    Path         /var/lib/docker/containers/*/*.log
+    Parser       docker
+    Tag          docker.*
+
+[OUTPUT]
+    Name  opensearch
+    Match docker.*
+    Host  opensearch
+    Port  9200
+    Index martech_api_logs
+    Type  _doc
+
+```
+
+Fire up the complete testing infrastructure with your terminal:
+
+```bash
+docker compose up -d
+
+```
+
+---
+
+## 🛠️ 3. API Troubleshooting Lab (Postman/Bruno + OpenSearch)
+
+To simulate a live technical support issue without writing application code, use an interactive testing container to send payloads, watch them fail, and locate the root cause within your log management UI.
+
+### Step A: Navigating OpenSearch Dashboards (Kibana)
+
+1. Open your browser and navigate to `http://<YOUR_SERVER_IP>:5601`.
+2. Go to **Management** -> **Index Management** and verify that `martech_api_logs` has successfully initialized.
+3. Open the **Discover** tab (top left menu icon) to access your live log search window.
+
+### Step B: Simulating Live Production Incidents
+
+Open Postman or Bruno on your local desktop to simulate customer interactions with a dummy service route.
+
+#### Incident 1: The `400 Bad Request` Payload Triage
+
+* **The Action:** In Postman, construct a `POST` request to an imaginary endpoint target, using raw JSON formatting inside the body request block.
+* **The Intentional Error:** Omit a critical closing bracket or send an invalid datatype (e.g., passing characters into a field reserved for numeric values):
+```json
+{
+  "user_id": "usr_99214A",
+  "event_type": "product_purchase",
+  "revenue": "One Hundred Dollars" 
+
+```
+
+
+
+```
+*   **The Troubleshooting Exercise:** Execute the request and watch it fail. Now, open your **OpenSearch Discover** tab. In the main query field, search explicitly for your failed string or response status:
+    ```json
+status: 400 OR "revenue"
+
+```
+
+```
+Expand the log entry payload. Analyze the raw stack trace metadata exactly as you would during a corporate support ticket investigation to pinpoint why your ingestion pipeline rejected the transmission.
+
+```
+
+#### Incident 2: The `401 Unauthorized` Token Hunt
+
+* **The Action:** Send an API call containing an old, invalid, or expired bearer authorization token header.
+* **The Troubleshooting Exercise:** Search your OpenSearch interface using the syntax query: `status: 401`. Observe the generated log structure to track missing user authorization vectors or verify client-side configurations.
+
+---
+
+## 📊 4. Data Warehouse Lab: Learning Raw SQL from Scratch
+
+To bypass complex, restrictive proprietary graphical editors, you will interact directly with your database core using a native, open-source database interface tool like **DBeaver** installed on your workstation.
+
+### Step A: Connect to the Warehouse Database
+
+1. Open DBeaver on your machine and select **Create New Connection** -> **PostgreSQL**.
+2. Input your connection parameters matching the configuration defined in your orchestration file:
+* **Host:** `<YOUR_SERVER_IP>`
+* **Port:** `5432`
+* **Database:** `marketing_vault`
+* **Username:** `analytics_admin`
+* **Password:** `martech_secret_pass`
+
+
+3. Click **Test Connection** to confirm connectivity, then open a blank **SQL Editor** script panel.
+
+### Step B: Build Your First Tables (Data Definitions)
+
+To learn SQL properly, you must build relational structures completely by hand. Run the following code execution sequences sequentially inside DBeaver to initialize your target analytical tables:
+
+```sql
+-- 1. Create your User Dimension Profile Table
+CREATE TABLE dim_users (
+    user_key SERIAL PRIMARY KEY,
+    user_id VARCHAR(50) UNIQUE,
+    user_name VARCHAR(100),
+    user_email VARCHAR(100),
+    acquisition_channel VARCHAR(50)
+);
+
+-- 2. Create your Core Marketing Event Fact Table
+CREATE TABLE fact_marketing_events (
+    event_id SERIAL PRIMARY KEY,
+    event_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id VARCHAR(50),
+    event_type VARCHAR(50),
+    campaign_name VARCHAR(100),
+    revenue_generated NUMERIC(10, 2)
+);
+
+```
+
+### Step C: Populate the Sandbox Warehouse (Data Insertion)
+
+Populate your newly deployed structures with dummy records to build out your analytical query sandbox environment:
+
+```sql
+-- Populate user directory
+INSERT INTO dim_users (user_id, user_name, user_email, acquisition_channel) VALUES
+('usr_01', 'Paul Randolph', 'paul@testlab.io', 'Google_Search'),
+('usr_02', 'Jessica R', 'jess@testlab.io', 'Paid_Social'),
+('usr_03', 'Alex Miller', 'alex@testlab.io', 'Direct_Traffic');
+
+-- Populate raw user conversion activities
+INSERT INTO fact_marketing_events (user_id, event_type, campaign_name, revenue_generated) VALUES
+('usr_01', 'ad_click', 'Summer_Sale_2026', 0.00),
+('usr_01', 'product_view', 'Summer_Sale_2026', 0.00),
+('usr_01', 'purchase', 'Summer_Sale_2026', 120.50),
+('usr_02', 'ad_click', 'Retargeting_Brand', 0.00),
+('usr_02', 'purchase', 'Retargeting_Brand', 45.00),
+('usr_03', 'email_open', 'Newsletter_Blast', 0.00);
+
+```
+
+---
+
+## 🎓 5. Progressive SQL Query Drills
+
+Now that your tables contain clean data, practice navigating them using fundamental relational operations. Complete these three foundational query drills in order to build up your data manipulation proficiency:
+
+### Drill 1: Filtering and Sorting (The `WHERE` and `ORDER BY` Basics)
+
+* **The Task:** Extract every event where an actual consumer transaction occurred, sorting from your highest-grossing revenue down to your lowest.
+* **The Code:**
+```sql
+SELECT user_id, event_type, campaign_name, revenue_generated
+FROM fact_marketing_events
+WHERE event_type = 'purchase'
+ORDER BY revenue_generated DESC;
+
+```
+
+
+
+```
+
+### Drill 2: Aggregations and Groups (The `SUM` and `GROUP BY` Multiplier)
+*   **The Task:** Calculate your total, combined gross revenue metrics generated across each independent marketing acquisition campaign.
+*   **The Code:**
+    ```sql
+    SELECT campaign_name, SUM(revenue_generated) AS total_campaign_revenue
+    FROM fact_marketing_events
+    GROUP BY campaign_name;
+
+```
+
+### Drill 3: Joining Disconnected Sets (The `INNER JOIN` Masterclass)
+
+* **The Task:** Cross-reference your marketing data. Pull an analytical sheet matching raw revenue transactions to a customer's specific name and origin channel.
+* **The Code:**
+```sql
+SELECT 
+    u.user_name,
+    u.acquisition_channel,
+    f.event_type,
+    f.campaign_name,
+    f.revenue_generated
+FROM fact_marketing_events f
+INNER JOIN dim_users u ON f.user_id = u.user_id
+WHERE f.event_type = 'purchase';
+
+```
+
+
+
+```
+
+***
+
+
+
+```
