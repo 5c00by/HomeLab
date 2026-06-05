@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  romm:
+    image: ghcr.io/rommapp/romm:latest
+    container_name: romm
+    environment:
+      - DB_HOST=mariadb
+      - DB_USER=romm
+      - DB_PASSWORD=secret_romm_pass
+      - DB_NAME=romm
+      - ROMM_AUTH_SECRET=generate_a_random_string_here
+    ports:
+      - 8082:8080
+    volumes:
+      - ${APP_CONFIG}/romm/resources:/romm/resources
+      - ${APP_CONFIG}/romm/config:/romm/config
+      - ${MEDIA_POOL}/roms:/romm/library
+    restart: unless-stopped
+
+  emulatorjs:
+    image: lscr.io/linuxserver/emulatorjs:latest
+    container_name: emulatorjs
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 3001:80
+      - 4001:3000
+    volumes:
+      - ${APP_CONFIG}/emulatorjs:/config
+      - ${MEDIA_POOL}/roms:/data
+    restart: unless-stopped
+
+  rom-save-syncer:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: rom-save-syncer
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 8384:8384 # Syncthing GUI port specifically for targeting cross-device save points
+      - 22000:22000/tcp
+      - 21027:21027/udp
+    volumes:
+      - ${APP_CONFIG}/syncthing-saves:/config
+      - ${MEDIA_POOL}/roms/saves:/data/saves # Point this straight to your save targets to link back to Bazzite
+    restart: unless-stopped
+
+  amp-game-server:
+    image: mitchtalmadge/amp-dockerized:latest
+    container_name: amp-core
+    restart: unless-stopped
+    network_mode: host
+    mac_address: 02:42:ac:11:00:02
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - AMP_AUTO_UPDATE=true
+    volumes:
+      - ${APP_CONFIG}/amp:/home/amp/.ampdata
