@@ -1,0 +1,160 @@
+
+
+# 🌐 Master Home Lab Architecture & Hardware Inventory
+
+This document serves as the master source of truth for all physical nodes, hardware specifications, and recording layouts across the network architecture.
+
+---
+
+## 🔱 Section 1: Core Production Storage & Services (Cerberus)
+
+* **Role:** Primary File Storage, Active Media Streaming, and Master Docker Stack Node.
+* **Motherboard:** ASUS Prime B550M-A WiFi II AMD AM4 microATX
+* **Processor:** AMD Ryzen 5 5500 (6 Cores, 12 Threads)
+* **Memory:** 16 GB Total
+* **Host OS:** OpenMediaVault (OMV) 8.x + CasaOS Dashboard Overlays
+* **Storage Pool Logic:** MergerFS Union Pool (Policy: `mfs` | `minfreespace=20G`)
+
+### 💽 Disk Infrastructure
+
+| Device Ident | Physical Capacity | Drive Model | Drive Family / Class | Technology | Status / Role |
+| --- | --- | --- | --- | --- | --- |
+| `/dev/nvme0n1` | 250 GB | *System NVMe* | Gen 3/4 Boot Drive | Flash TLC | **Active** / OS & CasaOS AppData |
+| `/dev/nvme1n1` | 250 GB | *System NVMe* | Gen 3/4 Cache Drive | Flash TLC | **Active** / High-Speed Cache |
+| `/dev/sda` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdb` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdc` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdd` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sde` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdf` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdg` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdh` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdi` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | ⚠️ **Degraded** / Serial: `ZDHAGBBJ` (Pending RMA) |
+| `/dev/sdj` | 250 GB | *SATA SSD* | 2.5" Standard SSD | Flash TLC | **Active** / Dedicated Container Backup |
+| `/dev/sdk` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+| `/dev/sdl` | 250 GB | *SATA SSD* | 2.5" Standard SSD | Flash TLC | **Active** / Unassigned Scratch Disk |
+| `/dev/sdm` | 250 GB | *SATA SSD* | 2.5" Standard SSD | Flash TLC | **Active** / Unassigned Scratch Disk |
+| `/dev/sdn` | 4.0 TB (3.58 TiB) | Seagate ST4000VN008 | IronWolf NAS Class | **CMR** | **Active** / Storage Pool |
+
+---
+
+## 🗄️ Section 2: Secondary Cold Storage & Ingestion (Archive Tower)
+
+* **Role:** Cold Storage, Legacy Media Arrays, Retro Gaming Mirrors, and Automated Disc Ingestion.
+* **Motherboard:** ASUS M5A97 R2.0 (AM3+ Platform)
+* **Memory:** 20 GB DDR3 RAM
+* **Host OS:** *Pending Migration to OpenMediaVault + CasaOS Framework*
+* **Storage Pool Logic:** Proposed MergerFS Data Pool + SnapRAID Dual-Parity Array (Using 3x 8TB USB Disks)
+
+### 💽 Disk Infrastructure
+
+| Device Ident | Physical Capacity | Drive Model | Vendor Family / Line | Technology | Status / Intended Deployment Role |
+| --- | --- | --- | --- | --- | --- |
+| `/dev/sdi` | 250 GB | *SATA SSD* | Standard 2.5" Solid State | Flash TLC | **Boot Drive** / Bare-Metal OS Node |
+| `/dev/sdh1` | 4.0 TB | ST4000DM004-2CV104 | Seagate BarraCuda Desktop | **SMR** | Data Node / Local ROM Copy (Read-Heavy Only) |
+| `/dev/sdj1` | 4.0 TB | ST4000DM004-2U9104 | Seagate BarraCuda Desktop | **SMR** | Data Node / Empty Blank Scratch Space |
+| `/dev/sdf1` | 2.0 TB | ST2000DM001-1CH164 | Seagate Desktop HDD Legacy | **CMR** | Data Node / Static Media Storage |
+| `/dev/sde1` | 3.0 TB | ST3000DM001-1ER166 | Seagate Desktop HDD Legacy | **CMR** | Data Node / Active TV/Video Assets |
+| `/dev/sdc1` | 3.0 TB | ST3000DM001-1ER166 | Seagate Desktop HDD Legacy | **CMR** | Data Node / Active TV/Video Assets |
+| `/dev/sdk1` | 2.0 TB | WD20EARS-00MVWB0 | Western Digital Caviar Green | **CMR** | Data Node / Static Backups |
+| `/dev/sda1` | 3.0 TB | WD3EZX-00DC0B0 | Western Digital Green | **CMR** | Data Node / Master Movie Assets |
+| `/dev/sdg1` | 3.0 TB | WD3EZX-00DC0B0 | Western Digital Green | **CMR** | Data Node / Master Movie Assets |
+| `/dev/sdd1` | 3.0 TB | WD3EZX-00DC0B0 | Western Digital Green | **CMR** | Data Node / Master Movie Assets |
+| `/dev/sdb1` | 3.0 TB | WD3EZX-00SPEB0 | Western Digital Green | **CMR** | Data Node / Master Movie Assets |
+
+### 🔌 External Enclosures & Optical Arrays
+
+* **USB Enclosures:** 3x 8TB Seagate Expansion External Hard Drives (SMR). Configured as SnapRAID dual-parity handles and array expansions.
+* **Optical Ingestion Handle (`/dev/sr0`):** MATSHITA DVD-RAM UJ880AS optical drive mapped directly to the *Automated Ripping Machine* Docker container.
+
+---
+
+## 🏗️ Section 3: High-Density High-Availability Infrastructure (Enterprise Rack)
+
+### 1. Supermicro 2U Storage Vault (High-Density Capacity Node)
+
+* **Chassis/Board:** Supermicro 2U X8DT3
+* **Processor:** 2x Intel Xeon E5620 (2.4GHz, 8 Cores / 16 Threads total)
+* **Memory:** 24 GB RAM
+* **Drive Layout:** 12x Hot-Swap Storage Trays
+* **Disk Population:** Fully populated with **12x Seagate IronWolf 4TB CMR NAS Hard Drives**
+* **Power:** Dual 720W Redundant Power Supplies
+
+### 2. Dell PowerEdge R710 (Active Compute / Virtualization Server)
+
+* **Chassis Form Factor:** 3.5" Chassis (6-Bay Configuration)
+* **Processor:** 2x Intel Xeon X5550 (2.66GHz Base, Quad-Core)
+* **Memory:** 52 GB Total RAM *(Optimized via donor platform RAM harvest)*
+* **Management:** Integrated Dell Remote Access Controller (iDRAC)
+* **Role:** Proxmox VE / Production Compute Cluster Node
+
+### 3. Dell Compellent SC220 Expansion Shelf (Pending Expansion Array)
+
+* **Form Factor:** 2U 24-Bay 2.5" High-Density SAS Enclosure
+* **Controllers:** Dual EM01 Controllers (XM3KX)
+* **Power:** Dual 700W Redundant Power Supplies
+* **Current Allocation:** 0/24 Disks populated (Reserved for low-latency scratch disk or SSD array extension)
+
+---
+
+## 🛡️ Section 4: Network Architecture & Perimeter Security
+
+### 1. Edge Firewall & Security Gateway (Qotom Appliance)
+
+* **Hardware Platform:** Qotom-Q575G6-S05 Barebone Mini PC (Fanless)
+* **Processor:** Intel Core i7-7500U (with native AES-NI hardware cryptography acceleration support)
+* **Memory:** 16 GB RAM
+* **Storage:** 256 GB Solid State Drive
+* **Network Interfaces:** 6x Gigabit Intel LAN Ports
+* **Operating System:** pfSense Software Stack
+* **Role:** Core Edge Router, Stateful Firewall, Traffic Shaper, and prospective network SIEM logs collector hub.
+
+### 2. Beelink SER5 Max Micro-Node
+
+* **Processor:** AMD Ryzen 5 Mobile Architecture
+* **Memory:** 32 GB DDR4 RAM
+* **Role:** High-efficiency mini computational server or specialized lightweight container deployment base.
+
+---
+
+## 🎮 Section 5: Client Endpoints & Production Machines
+
+### 1. The Bazzite Gaming PC
+
+* **Motherboard:** Gigabyte B550M DS3H AC AMD AM4 microATX
+* **Processor:** AMD Ryzen 9 5900XT Vermeer AM4 3.30GHz 16-Core
+* **Memory:** 32 GB Corsair DDR4 RAM
+* **GPU:** XFX AMD Radeon RX 7600 XT Speedster SWFT210 Core Dual Fan 16GB GDDR6 PCIe 4.0
+* **OS Environment:** Bazzite Linux Gaming OS Distribution
+
+### 2. Primary Engineering & Desktop Workstation
+
+* **Motherboard:** ASUS ROG Strix B550-F Gaming WiFi II ATX
+* **Architecture Specs:** PCIe 4.0, 2.5Gb LAN, WiFi 6E, Aura Sync RGB Headers
+* **Processor:** AMD Ryzen 9 5900XT Vermeer AM4 3.30GHz 16-Core
+* **Memory:** 64 GB DDR4 RAM
+* **GPU:** PowerColor AMD Radeon RX 7700 XT Fighter Overclocked Triple Fan 12GB GDDR6
+
+---
+
+## 📦 Section 6: Bare-Metal Spare Hardware Pool (Unassigned Project Inventory)
+
+The following components are fully tested, un-cased, and reserved for upcoming expansion architectures or ad-hoc project layers:
+
+* **ASUS Prime B450-Plus ATX Motherboard**
+* *Current Standby CPU:* AMD Ryzen 3 1500
+* *Available Upgrade Component:* Secondary **AMD Ryzen 5 5500** processor on standby for direct AM4 socket drop-in.
+
+
+* **MSI Z270 PC Mate Motherboard**
+* *CPU Configuration:* Intel Core i5 (7th Generation)
+
+
+* **Dell PowerEdge R710 Chassis Parts Unit**
+* *Original Specs:* 1x Intel Xeon X5647 (2.8GHz)
+* *Current Status:* System stripped down for spare components; memory bank cleanly integrated into the primary virtualization host node for optimized system compute density.
+
+
+
+---
+
