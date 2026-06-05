@@ -116,7 +116,88 @@ With this multi-tiered storage architecture running, you can practice handling r
 4. Watch your virtual machines spin back up on completely different hardware within minutes.
 
 
+Adding a dedicated **Data Recovery and Forensic Triage** tier using **SystemRescue** is the ultimate way to round out this storage simulator! Practicing on live, simulated drive failures or corrupted partition tables is exactly how you turn standard sysadmin knowledge into high-level engineering skills.
+
+Since you've already got real-world experience pulling data off old or failing partitions, baking this directly into your lab gives you a structured, repeatable sandbox to test advanced file carvers, partition rebuilders, and raw block duplication techniques without risking any real data.
+
+Below is the extension blueprint. It outlines how to deploy SystemRescue in an isolated VM, pass your test array targets to it, and execute recovery drills.
 
 ---
 
-This complete blueprint can be pushed straight to your master GitHub branch to document your storage testing lab. It's an incredible framework that lets you practice enterprise-grade infrastructure management completely on recycled hardware!
+## 🧰 Tier 5: The Forensic Triage & Data Recovery Lab (SystemRescue)
+
+SystemRescue is a Linux system rescue disk available as a bootable ISO image. Deploying it as a permanent utility VM inside Proxmox allows you to hot-plug degraded virtual disks or raw network storage blocks straight into a dedicated recovery environment.
+
+### 🛠️ Step A: Provisioning the Rescue Appliance
+
+1. Download the latest **SystemRescue ISO** image directly into your Proxmox ISO storage template pool.
+2. Create a new VM on your Dell R710 host:
+* **CPU/RAM:** 2 vCPUs, 2–4 GB RAM.
+* **OS:** Select the SystemRescue ISO as the boot media.
+* **Network:** Attach to your isolated lab bridge (`vmbr1`).
+
+
+3. Set the VM boot options to boot from the CD-ROM drive first. When launched, it will boot directly into a live, non-destructive Linux command-line environment loaded with every open-source forensic tool available.
+
+---
+
+## 🕹️ Data Recovery Training Drills
+
+To practice, you will intentionally corrupt file systems on a test disk mapped from your salvaged laptop drive array, then use SystemRescue to pull the data back from the dead.
+
+### Drill 1: Rebuilding Broken Partition Tables (`TestDisk`)
+
+* **The Scenario:** A drive loses its partition map due to a bad write sequence, showing up as unallocated or raw space.
+* **The Intentional Sabotage:** Allocate a test virtual disk from your Compellent pool to a temporary Linux VM. Format it as `ext4`, drop a few test text files onto it, and then deliberately wipe the partition table header using `dd`:
+```bash
+dd if=/dev/zero of=/dev/sdX bs=512 count=1 conv=notrunc
+
+```
+
+
+
+```
+    *(Where `/dev/sdX` is your isolated test disk).*
+*   **The Recovery Action:** Hot-plug that sabotaged disk over to your SystemRescue VM. Launch `testdisk` from the command line:
+    ```bash
+    testdisk /dev/sdX
+
+```
+
+```
+Practice running an **Analyse** scan to let TestDisk search the deeper blocks of the drive, locate the missing backup superblocks, and cleanly rewrite the partition table back to disk without losing your test files.
+
+```
+
+### Drill 2: Raw File Carving from Corrupted File Systems (`PhotoRec`)
+
+* **The Scenario:** The file system structure is entirely corrupted or formatted over, but the raw binary signatures of the files themselves are still physically intact on the drive platters.
+* **The Intentional Sabotage:** Format the test disk, drop a handful of images or documents onto it, and then run a quick format over it or corrupt the file system superblock entirely.
+* **The Recovery Action:** In your SystemRescue VM, create a directory on a *separate, healthy* disk to hold recovered assets, then launch `photorec`:
+```bash
+
+```
+
+
+
+photorec /dev/sdX
+
+```
+    Practice configuring the tool to look for specific file signatures (like `.pdf`, `.jpg`, `.doc`). PhotoRec will completely bypass the broken file system, read the raw data blocks sequentially, and carve the files out based on their binary headers, dumping them safely into your recovery folder.
+
+### Drill 3: Imaging Failing Hardware (`ddrescue`)
+*   **The Scenario:** A drive is actively dying, throwing massive I/O read errors, and will completely fail soon. Standard `dd` will freeze or crash the moment it hits a bad block.
+*   **The Recovery Action:** SystemRescue includes `ddrescue` (GNU ddrescue), which is designed to handle dying media intelligently. Practice running a multi-pass recovery image stream:
+    ```bash
+    ddrescue -d -r 3 /dev/sdX /mnt/backup/bad_disk.img /mnt/backup/recovery.log
+
+```
+
+```
+**Why this tool matters:** `ddrescue` will quickly copy the healthy areas first, skipping over bad sectors to prevent putting stress on the dying drive. Then, it goes back in subsequent passes to try and scrape the data out of the damaged sectors. The `.log` mapfile allows you to interrupt the process and resume it at any time without starting over.
+
+```
+
+---
+
+
