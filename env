@@ -1,0 +1,2 @@
+MEDIA_POOL=/srv/mergerfs/media_vault/media
+APP_CONFIG=/srv/dev-disk-by-uuid-YOUR-FAST-SSD-ID/appdata
