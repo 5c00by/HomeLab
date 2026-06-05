@@ -1,0 +1,158 @@
+# 🏗️ Blueprint: Isolated Cybersecurity Detection Lab (SIEM Sandbox)
+
+This guide outlines how to architect, deploy, and utilize a fully isolated Security Operations Center (SOC) simulation environment on a virtualized host. It leverages **Wazuh** as the SIEM/XDR brain, **Microsoft Sysmon** for enhanced endpoint logging, and **Kali Linux** as the offensive simulation platform.
+
+---
+
+## 🌐 1. Network Topology & Isolation
+
+To safely run security tools and simulate attacks, this entire environment must be completely segmented from your primary production network (`Cerberus`). This prevents scanning traffic or exploit payloads from interacting with stable production infrastructure.
+
+### Network Layout
+
+```
+                          [ Physical Host (Proxmox / R710) ]
+                                          |
+                      =========================================
+                      | Virtual Bridge: vmbr1 (Isolated LAN)  |
+                      =========================================
+                                          |
+         -----------------------------------------------------------------
+         |                                |                              |
+[ Attacker Node ]                [ Defensive SIEM ]             [ Target Endpoint ]
+   Kali Linux                      Wazuh Manager                    Windows 11
+(192.168.99.10)                   (192.168.99.5)                  (192.168.99.20)
+
+```
+
+### Proxmox Network Configuration
+
+1. Navigate to your Proxmox Node -> **System** -> **Network**.
+2. Click **Create** -> **Linux Bridge**.
+3. Name it `vmbr1` (or your next available sequential bridge designation).
+4. Leave the **IPv4/CIDR** and **Bridge ports** entirely blank. This creates an isolated virtual switch with no physical interface attachment and no default routing to your main home network.
+
+---
+
+## 🧠 2. Tier 1: The Defensive Brain (Wazuh Manager)
+
+The Wazuh Manager handles the collection, indexing, and alerting of all system telemetry.
+
+### Provisioning the VM / LXC
+
+* **Base OS:** Ubuntu 22.04 LTS or Debian 12 (64-bit)
+* **Compute Allocation:** 2–4 vCPUs, 4–8 GB RAM, 50 GB+ Storage (SSD preferred for indexing logs).
+* **Network Assignment:** Attach to the isolated bridge (`vmbr1`) and assign a static IP: `192.168.99.5/24`.
+
+### Installation Steps
+
+The most efficient deployment method for a standalone lab is using the automated Wazuh single-node installation script. Run the following command inside your clean Ubuntu/Debian instance:
+
+```bash
+curl -sO https://packages.wazuh.com/4.x/wazuh-install.sh && sudo bash wazuh-install.sh -a
+
+```
+
+Once completed, the terminal will print a secure password for the admin account. Navigate to `[https://192.168.99.5](https://192.168.99.5)` in a browser within your lab network to log into the dashboard.
+
+---
+
+## 🎯 3. Tier 2: The Target Endpoint (Windows 11)
+
+This endpoint simulates a corporate workstation. It will run standard workloads while shipping granular telemetry back to the defensive brain.
+
+### Provisioning the VM
+
+* **Base OS:** Windows 11 Client
+* **Compute Allocation:** 2 vCPUs, 4 GB RAM, 60 GB Storage.
+* **Network Assignment:** Attach to the isolated bridge (`vmbr1`) and assign a static IP: `192.168.99.20/24`.
+
+### Step A: Deploy Microsoft Sysmon
+
+Standard Windows Security Logs omit critical telemetry like process ancestry, network socket creations, and DLL injections. System Monitor (Sysmon) fixes this gap.
+
+1. Download **Sysmon** from Microsoft Sysinternals.
+2. Download a high-fidelity configuration file to filter out normal Windows background noise (e.g., the community-standard *SwiftOnSecurity Sysmon-Config*).
+3. Open an Administrative PowerShell window in the directory containing the downloaded assets and execute the installer with the configuration mapping:
+```powershell
+.\Sysmon64.exe -i .\sysmonconfig-export.xml
+
+```
+
+
+
+```
+4. Verify functionality by opening **Event Viewer** -> **Applications and Services Logs** -> **Microsoft** -> **Windows** -> **Sysmon** -> **Operational**.
+
+### Step B: Deploy the Wazuh Agent
+1. Log into your Wazuh Web Console (`[https://192.168.99.5](https://192.168.99.5)`).
+2. Click **Deploy new agent** from the homepage menu.
+3. Select **Windows** as the OS package type.
+4. Input the Wazuh Manager Server IP (`192.168.99.5`).
+5. Run the generated PowerShell installation command directly on the Windows 11 VM as an Administrator.
+6. Start the service via PowerShell:
+   ```powershell
+   NET START Wazuh
+
+```
+
+---
+
+## ⚔️ 4. Tier 3: The Attacker (Kali Linux)
+
+Kali Linux serves as the offensive simulation platform to generate malicious traffic sequences.
+
+### Provisioning the VM
+
+* **Base OS:** Kali Linux (Latest Rolling Release)
+* **Compute Allocation:** 2 vCPUs, 4 GB RAM, 40 GB Storage.
+* **Network Assignment:** Attach to the isolated bridge (`vmbr1`) and assign a static IP: `192.168.99.10/24`.
+
+---
+
+## 🕹️ 5. Practical Lab Exercise: Simulating and Detecting an Attack
+
+With all three tiers live, you can execute a controlled attack loop to analyze how telemetry converts into actionable SIEM alerts.
+
+### Step A: Verify the Baseline
+
+Open the Wazuh Dashboard, click the **Agents** tab, and confirm that the Windows 11 endpoint status registers as **Active**.
+
+### Step B: Execute the Offensive Run (From Kali Linux)
+
+Open a terminal instance on your Kali Linux VM and execute an aggressive network reconnaissance scan against the target:
+
+```bash
+nmap -A -T4 192.168.99.20
+
+```
+
+Next, simulate an authentication brute-force attempt against Windows services using `hydra`:
+
+```bash
+hydra -l Administrator -P /usr/share/wordlists/rockyou.txt ssh://192.168.99.20 -t 4
+
+```
+
+*(Note: Ensure an SSH daemon or RDP surface is accessible on the target for the connection attempts to log correctly).*
+
+### Step C: Analyze the Defensive Telemetry (From Wazuh Dashboard)
+
+1. Pivot back to the Wazuh Web Console and open the **Security Events** module.
+2. Filter the events by the Windows 11 Agent ID.
+3. Observe the generated security alerts:
+* **Reconnaissance Detection:** Look for alerts flagging multiple rapid connection attempts across sequential port arrays.
+* **Brute-Force Alerts:** Identify high-severity alerts highlighting a spike in failed authentication attempts within a tight time window (Rule ID sequences tracking Windows Event ID `4625` for Logon Failures).
+* **Granular Process Tracking:** Review the underlying Sysmon logs to pinpoint exactly which local binaries or network sockets responded to the stimulus.
+
+
+
+---
+
+## 📈 6. Advanced Lab Expansions (Future Roadmap)
+
+Once the core three-tier framework functions smoothly, consider expanding your sandbox infrastructure into true datacenter-scale modeling:
+
+* **Active Directory Integration:** Deploy a Windows Server instance as a Domain Controller to explore Kerberoasting, Group Policy exploitation, and domain privilege escalation pathing.
+* **Network Edge Visibility:** Route syslog outputs from your Qotom pfSense firewall directly into the Wazuh Manager to review external edge blocks alongside endpoint file modifications.
+* **Automated Breach Emulation:** Deploy frameworks like **Atomic Red Team** directly on target endpoints to automate complex, mapped execution profiles based on the MITRE ATT&CK framework.
